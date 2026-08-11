@@ -24,6 +24,7 @@ let jenisAktif = 'guru';
 export function renderForm(container) {
   container.innerHTML = `
     <div class="page-form">
+      <a class="back-link" href="/" data-route="/">← Kembali ke Beranda</a>
       <div class="form-card">
         <h2>Input Data</h2>
         <p class="form-desc">
