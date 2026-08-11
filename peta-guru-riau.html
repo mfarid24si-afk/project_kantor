@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sebaran Guru — Provinsi Riau</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/6.15.1/ol.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/6.15.1/ol.js"></script>
+
+<style>
+  :root {
+    --ink: #1c2b24;
+    --paper: #f4f6ef;
+    --panel: #ffffff;
+    --line: #d8ddd0;
+    --accent: #2f6b4f;
+    --accent-2: #c9622a;
+    --muted: #6b7568;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  header {
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  header p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  #status {
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  #status.stale .dot { background: var(--accent-2); }
+
+  #wrap {
+    position: relative;
+    height: calc(100vh - 78px);
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+
+  .legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    z-index: 5;
+  }
+
+  .legend .title {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .ol-popup {
+    position: absolute;
+    background: var(--panel);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    bottom: 12px;
+    left: -60px;
+    min-width: 200px;
+  }
+
+  .ol-popup:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 60px;
+    border: 8px solid transparent;
+    border-top-color: var(--panel);
+  }
+
+  .ol-popup-closer {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1;
+    background: none;
+    border: none;
+  }
+
+  .popup-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0 0 6px;
+    color: var(--accent);
+  }
+
+  .popup-count {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .popup-count span {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Sebaran Guru — Provinsi Riau</h1>
+    <p>Jumlah guru terdata per kabupaten/kota</p>
+  </div>
+  <div id="status"><span class="dot"></span><span id="status-text">Memuat data…</span></div>
+</header>
+
+<div id="wrap">
+  <div id="map"></div>
+
+  <div class="legend">
+    <div class="title">Jumlah Guru</div>
+    <div id="legend-body"></div>
+  </div>
+
+  <div id="popup" class="ol-popup" style="display:none;">
+    <button id="popup-closer" class="ol-popup-closer">✕</button>
+    <div id="popup-content"></div>
+  </div>
+</div>
+
+<script>
+/* ========================================================================
+   KONFIGURASI — sesuaikan bagian ini dengan proyekmu
+   ======================================================================== */
+
+const SUPABASE_URL = "https://lvorvfhdrlagcpsimteo.supabase.co"; // ganti sesuai project kamu
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2b3J2ZmhkcmxhZ2Nwc2ltdGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzIwNTAsImV4cCI6MjEwMTkwODA1MH0.gM7BvTL1wNKVx6Oxozry_s8bazxTNtRbU7u0p7Lx3pA";          // pakai anon key, JANGAN service_role key
+
+// Nama tabel & kolom di Supabase (tabel: guru)
+const TABLE_NAME = "guru";
+const KOLOM_KABUPATEN = "kabupaten";
+
+// Path ke file GeoJSON batas wilayah Riau kamu.
+// File ini menggunakan data koordinat dari Area_Kab_Riau.geojson.
+// Taruh file ini satu folder dengan HTML ini, atau ganti dengan URL hosting kamu.
+const GEOJSON_PATH = "Area_Kab_Riau.geojson";
+
+// Nama properti kabupaten di dalam file GeoJSON
+const GEOJSON_PROP_NAMA = "Keterangan";
+
+// Interval auto-refresh data dari Supabase (ms). 15000 = tiap 15 detik.
+const REFRESH_INTERVAL = 15000;
+
+/* ======================================================================== */
+
+let vectorSource, vectorLayer, popupOverlay;
+let jumlahPerKabupaten = {};
+
+const statusEl = document.getElementById("status");
+const statusText = document.getElementById("status-text");
+
+function setStatus(text, stale) {
+  statusText.textContent = text;
+  statusEl.classList.toggle("stale", !!stale);
+}
+
+// --- Palet warna unik per kabupaten agar setiap daerah terlihat ---
+const REGION_COLORS = [
+  '#f28e2b', '#4e79a7', '#e15759', '#76b7b2', '#59a14f',
+  '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ab',
+  '#8cd17d', '#d37295'
+];
+const COLOR_NONE = '#cccccc';
+
+function getColorForRegion(name) {
+  if (!name) return COLOR_NONE;
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) % REGION_COLORS.length;
+  }
+  return REGION_COLORS[hash];
+}
+
+function renderLegend(maxCount) {
+  const steps = [
+    { label: "Tidak ada data", color: COLOR_NONE },
+    { label: `0`, color: COLOR_SCALE[0] },
+    { label: `1 – ${Math.ceil(maxCount * 0.25)}`, color: COLOR_SCALE[1] },
+    { label: `${Math.ceil(maxCount * 0.25) + 1} – ${Math.ceil(maxCount * 0.5)}`, color: COLOR_SCALE[2] },
+    { label: `${Math.ceil(maxCount * 0.5) + 1} – ${Math.ceil(maxCount * 0.75)}`, color: COLOR_SCALE[3] },
+    { label: `> ${Math.ceil(maxCount * 0.75)}`, color: COLOR_SCALE[4] },
+  ];
+  const body = document.getElementById("legend-body");
+  body.innerHTML = steps.map(s => `
+    <div class="legend-row">
+      <span class="legend-swatch" style="background:${s.color}"></span>
+      <span>${s.label}</span>
+    </div>
+  `).join("");
+}
+
+/* ----------------------- Ambil & hitung data guru ----------------------- */
+
+async function fetchJumlahGuruPerKabupaten() {
+  const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=${KOLOM_KABUPATEN}`;
+  const res = await fetch(url, {
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Gagal mengambil data Supabase: ${res.status}`);
+  }
+
+  const rows = await res.json();
+  const counts = {};
+  for (const row of rows) {
+    const key = (row[KOLOM_KABUPATEN] || "").trim();
+    if (!key) continue;
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  return counts;
+}
+
+/* ----------------------------- Styling peta ------------------------------ */
+
+function styleFeature(feature) {
+  const namaKab = feature.get(GEOJSON_PROP_NAMA);
+  const count = jumlahPerKabupaten[namaKab];
+
+  return new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: count != null ? getColorForRegion(namaKab) : COLOR_NONE,
+    }),
+    stroke: new ol.style.Stroke({
+      color: '#3d3d3d',
+      width: 1,
+    }),
+  });
+}
+
+async function refreshData() {
+  try {
+    jumlahPerKabupaten = await fetchJumlahGuruPerKabupaten();
+    if (vectorLayer) vectorLayer.changed();
+    const maxCount = Math.max(1, ...Object.values(jumlahPerKabupaten));
+    renderLegend(maxCount);
+    const total = Object.values(jumlahPerKabupaten).reduce((a, b) => a + b, 0);
+    setStatus(`${total} guru terdata • diperbarui ${new Date().toLocaleTimeString("id-ID")}`, false);
+  } catch (err) {
+    console.error(err);
+    setStatus("Gagal memuat data terbaru — mencoba lagi…", true);
+  }
+}
+
+/* --------------------------------- Peta ---------------------------------- */
+
+async function initMap() {
+  // Popup overlay
+  const popupEl = document.getElementById("popup");
+  const popupCloser = document.getElementById("popup-closer");
+  popupOverlay = new ol.Overlay({
+    element: popupEl,
+    autoPan: { animation: { duration: 250 } },
+  });
+  popupCloser.onclick = () => {
+    popupOverlay.setPosition(undefined);
+    popupEl.style.display = "none";
+    return false;
+  };
+
+  vectorSource = new ol.source.Vector();
+
+  vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+    style: styleFeature,
+  });
+
+  const map = new ol.Map({
+    target: "map",
+    layers: [
+      new ol.layer.Tile({ source: new ol.source.OSM() }),
+      vectorLayer,
+    ],
+    overlays: [popupOverlay],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([101.7, 0.6]), // titik tengah Riau kira-kira
+      zoom: 7,
+    }),
+  });
+
+  async function loadGeoJSON() {
+    try {
+      const res = await fetch(GEOJSON_PATH);
+      const geojson = await res.json();
+      normalizeGeoJSON(geojson);
+      const features = new ol.format.GeoJSON().readFeatures(geojson, {
+        dataProjection: "EPSG:4326",
+        featureProjection: "EPSG:3857",
+      });
+      vectorSource.addFeatures(features);
+      const extent = vectorSource.getExtent();
+      if (extent) {
+        map.getView().fit(extent, { padding: [40, 40, 40, 40], maxZoom: 9 });
+      }
+    } catch (err) {
+      console.error("Gagal memuat GeoJSON:", err);
+    }
+  }
+
+  function normalizeGeoJSON(obj) {
+    if (Array.isArray(obj)) {
+      return obj.map(normalizeGeoJSON);
+    }
+    if (obj && typeof obj === "object") {
+      if (obj.type === "FeatureCollection" && Array.isArray(obj.features)) {
+        obj.features = obj.features.map(normalizeGeoJSON);
+        return obj;
+      }
+      if (obj.type === "Feature" && obj.geometry) {
+        obj.geometry = normalizeGeoJSON(obj.geometry);
+        return obj;
+      }
+      if (obj.type === "Polygon" || obj.type === "MultiPolygon") {
+        obj.coordinates = cleanCoordinates(obj.coordinates);
+        return obj;
+      }
+      if (obj.coordinates) {
+        obj.coordinates = cleanCoordinates(obj.coordinates);
+        return obj;
+      }
+    }
+    return obj;
+  }
+
+  function cleanCoordinates(coords) {
+    if (!Array.isArray(coords)) return coords;
+    if (coords.length === 0) return coords;
+    if (typeof coords[0] === "number") {
+      const [x, y, z] = coords;
+      const clean = [x, y];
+      if (typeof z === "number") {
+        clean.push(z);
+      }
+      return clean;
+    }
+    return coords.map(cleanCoordinates);
+  }
+
+  loadGeoJSON();
+
+  // Klik kabupaten -> tampilkan popup
+  map.on("click", (evt) => {
+    const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
+    if (!feature) {
+      popupOverlay.setPosition(undefined);
+      popupEl.style.display = "none";
+      return;
+    }
+    const namaKab = feature.get(GEOJSON_PROP_NAMA);
+    const count = jumlahPerKabupaten[namaKab];
+
+    document.getElementById("popup-content").innerHTML = `
+      <p class="popup-title">${namaKab}</p>
+      <p class="popup-count">${count !== undefined ? count : 0} <span>guru terdata</span></p>
+    `;
+    popupEl.style.display = "block";
+    popupOverlay.setPosition(evt.coordinate);
+  });
+
+  // Ubah cursor jadi pointer saat hover di atas kabupaten
+  map.on("pointermove", (evt) => {
+    const hit = map.hasFeatureAtPixel(evt.pixel);
+    map.getTargetElement().style.cursor = hit ? "pointer" : "";
+  });
+
+  await refreshData();
+  setInterval(refreshData, REFRESH_INTERVAL);
+}
+
+initMap();
+</script>
+</body>
+</html>
