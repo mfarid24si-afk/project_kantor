@@ -54,7 +54,10 @@ export async function fetchJumlahSiswaPerKabupaten() {
   return hitungPerKabupaten(await fetchKolom(TABEL_SISWA, KOLOM_KABUPATEN));
 }
 
-/** Kirim satu baris data ke tabel (POST) — header identik dengan GET (FR-5.2). */
+/** Kirim satu baris data ke tabel (POST) — header identik dengan GET (FR-5.2).
+ * Catatan: response body POST bisa kosong (body hanya error bila gagal),
+ * jadi cukup cek status — JANGAN diparse sebagai JSON agar data yang
+ * tersimpan sukses tidak salah dilaporkan sebagai gagal. */
 export async function insertBaris(tableName, payload) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}`, {
     method: 'POST',
@@ -65,5 +68,5 @@ export async function insertBaris(tableName, payload) {
     const detail = await res.text();
     throw new Error(`Supabase insert gagal: ${res.status} — ${detail.slice(0, 200)}`);
   }
-  return res.json();
+  return true;
 }

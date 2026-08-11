@@ -50,8 +50,14 @@ Tabel yang dipakai:
 
 | Tabel | Kolom |
 |-------|-------|
-| `guru` (sudah ada) | `nama`, `kabupaten`, `sekolah` |
-| `siswa` (baru) | `nama`, `kabupaten`, `sekolah`, `jenjang` (opsional) |
+| `guru` (sudah ada) | `id`, `nama_guru`, `nuptk`, `asal_sekolah`, `kelurahan`, `kabupaten`, `provinsi`, `nama_guru_utama`, `created_at` |
+| `siswa` (belum dibuat) | `nama`, `sekolah`, `kabupaten`, `jenjang` (opsional) |
+
+> Kolom `guru` adalah **skema asli di Supabase** (hasil verifikasi langsung via API).
+> Form Guru otomatis menyesuaikan dengan skema ini: wajib `nama_guru`, `kabupaten`,
+> `asal_sekolah`; opsional `nuptk`, `kelurahan`, `provinsi`, `nama_guru_utama`.
+> Daftar kolom terpusat di `config.js` (`KOLOM_GURU` / `KOLOM_SISWA`) — jika skema
+> berubah, cukup perbarui daftar itu, form menyesuaikan sendiri.
 
 Jika tabel `siswa` perlu dibuat, jalankan SQL ini di **SQL Editor** Supabase:
 

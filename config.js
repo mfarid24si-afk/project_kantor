@@ -16,12 +16,27 @@ export const SUPABASE_ANON_KEY =
 // --- Tabel & kolom Supabase ---
 export const TABEL_GURU = 'guru';
 export const TABEL_SISWA = 'siswa';
+// Nama kolom kabupaten (sama di kedua tabel).
 export const KOLOM_KABUPATEN = 'kabupaten';
-export const KOLOM_NAMA = 'nama';
-export const KOLOM_SEKOLAH = 'sekolah';
-// Kolom opsional khusus tabel siswa (jenjang/kelas). Jika kolom ini tidak
-// ada di tabel `siswa` Anda, hapus baris berikut — form otomatis menyesuaikan.
-export const KOLOM_JENJANG = 'jenjang';
+
+// Kolom tabel `guru` — SKEMA ASLI di Supabase (hasil verifikasi langsung):
+// id, nama_guru, nuptk, asal_sekolah, kelurahan, kabupaten, provinsi,
+// nama_guru_utama, created_at. Form memakai daftar ini apa adanya.
+// Urutan di sini = urutan field pada Form. Catatan: `nuptk` dikirim sebagai
+// angka (kolomnya bertipe integer).
+export const KOLOM_GURU = [
+  'nama_guru',
+  'kabupaten',
+  'asal_sekolah',
+  'nuptk',
+  'kelurahan',
+  'provinsi',
+  'nama_guru_utama',
+];
+
+// Kolom tabel `siswa` (belum dibuat di Supabase — struktur mengikuti PRD).
+// Saat tabel siswa sudah dibuat, sesuaikan daftar ini dengan skema aslinya.
+export const KOLOM_SISWA = ['nama', 'sekolah', 'kabupaten', 'jenjang'];
 
 // --- GeoJSON batas wilayah (dipakai apa adanya, tidak digambar ulang) ---
 export const GEOJSON_PATH = 'Area_Kab_Riau.geojson';
