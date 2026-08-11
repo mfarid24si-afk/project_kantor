@@ -7,11 +7,15 @@
  *  - Validasi dasar (field wajib + kabupaten harus dari daftar valid)
  *  - POST ke Supabase memakai struktur API key yang sama (FR-5.2)
  *  - Notifikasi sukses + form ter-reset setelah submit (FR-4.6)
+ *
+ *  CATATAN: tabel `siswa` belum dibuat di Supabase (404 saat dibaca) —
+ *  submit data siswa akan gagal sampai tabel tersebut tersedia.
  * ===================================================================== */
 
 import { TABEL_GURU, TABEL_SISWA, KOLOM_GURU, KOLOM_SISWA } from '../config.js';
 import { insertBaris } from '../api.js';
 import { getKabupatenList, escapeHtml, showToast } from '../ui.js';
+import { footerHtml } from '../footer.js';
 
 // Kolom yang wajib diisi per jenis data.
 const REQUIRED = {
@@ -67,6 +71,7 @@ export function renderForm(container) {
         </form>
       </div>
     </div>
+    ${footerHtml()}
   `;
 
   const form = document.getElementById('data-form');
@@ -216,8 +221,10 @@ export function renderForm(container) {
     try {
       await insertBaris(jenis.table, payload);
       showToast(`Data ${jenis.label} berhasil disimpan ke peta ✓`);
+      // Reset isian, tetapi PERTAHANKAN jenis data yang sedang dipilih
+      // (jangan paksa kembali ke "Guru").
       form.reset();
-      setJenis('guru');
+      renderFields(jenisAktif);
       inputNamaFokus();
     } catch (err) {
       console.error(err);

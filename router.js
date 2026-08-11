@@ -1,6 +1,6 @@
 /* =====================================================================
  * ROUTER CLIENT-SIDE (history mode) — FR-1
- * Rute:  /  → Homepage |  /peta  → Peta |  /form  → Form
+ * Rute:  /  → Homepage |  /peta  → Peta |  /form  → Form |  /tentang → Tentang
  * Setiap halaman mengembalikan fungsi cleanup yang dipanggil saat
  * berpindah halaman (mis. menghentikan interval polling peta).
  * ===================================================================== */
@@ -8,17 +8,20 @@
 import { renderHome } from './pages/home.js';
 import { renderPeta } from './pages/peta.js';
 import { renderForm } from './pages/form.js';
+import { renderTantang } from './pages/tantang.js';
 
 const routes = {
   '/': renderHome,
   '/peta': renderPeta,
   '/form': renderForm,
+  '/tentang': renderTantang,
 };
 
 const titles = {
   '/': 'Peta Guru & Siswa — Provinsi Riau',
   '/peta': 'Peta — Guru & Siswa Riau',
   '/form': 'Form Input — Guru & Siswa Riau',
+  '/tentang': 'Tentang — Guru & Siswa Riau',
 };
 
 let currentCleanup = null;
