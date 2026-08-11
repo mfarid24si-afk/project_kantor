@@ -1,24 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Peta sebaran guru dan siswa di 12 kabupaten/kota Provinsi Riau — data realtime dari Supabase."
-    />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>"
-    />
-    <title>Peta Guru &amp; Siswa — Provinsi Riau</title>
+    <title>Peta Sebaran Guru & Siswa — Provinsi Riau</title>
   </head>
+
   <body>
-    <header class="navbar">
+    <nav class="navbar">
       <a class="navbar-brand" href="/" data-route="/">
-        <span class="brand-logo" aria-hidden="true">🗺️</span>
-        <span class="brand-text">Peta Guru &amp; Siswa Riau</span>
+        <img
+          src="https://kamusbahasariau.kemendikdasmen.go.id/assets/bbpr3.png"
+          alt="Logo Provinsi Riau"
+        />
+
+        <a class="navbar-brand" href="/" data-route="/">
+          <img
+            src="https://kamusbahasariau.kemendikdasmen.go.id/assets/bbpr3.png"
+            alt="Logo Provinsi Riau"
+          />
+        </a>
       </a>
+
+      <div class="navbar-nav" id="navbar-nav">
+        <a class="nav-link active" href="/" data-route="/">Beranda</a>
+        <a class="nav-link" href="/peta" data-route="/peta">Peta</a>
+        <a class="nav-link" href="/form" data-route="/form">Input Data</a>
+        <a class="nav-link" href="/tentang" data-route="/tentang">Tentang</a>
+      </div>
 
       <button
         class="navbar-toggle"
@@ -28,21 +37,16 @@
         aria-expanded="false"
         aria-controls="navbar-nav"
       >
-        <span class="hamburger" aria-hidden="true"></span>
-        <span class="hamburger" aria-hidden="true"></span>
-        <span class="hamburger" aria-hidden="true"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
       </button>
-
-      <nav class="navbar-nav" id="navbar-nav" aria-label="Navigasi utama">
-        <a class="nav-link" href="/peta" data-route="/peta">Peta</a>
-        <a class="nav-link" href="/form" data-route="/form">Form</a>
-      </nav>
-    </header>
+    </nav>
 
     <main id="app"></main>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="/main.js"></script>
   </body>
 </html>
