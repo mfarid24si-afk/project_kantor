@@ -10,7 +10,7 @@ import { footerHtml } from "../footer.js";
 const ABOUT_IMAGES = {
   pcr: "/assets/images/pcr.jpg",
   bbpr: "/assets/images/bbpr.jpeg",
-  logoPcr: "/assets/images/logo-pcr.jpg",
+  logoPcr: "/assets/images/logo-pcr.webp",
   logoBbpr: "/assets/images/logo-bbpr.png",
 };
 
