@@ -1,198 +1,244 @@
-/* =====================================================================
- * HALAMAN TENTANG — /tentang
- * Konten program dipindahkan dari homepage agar homepage lebih
- * data-first: hero → statistik → perbandingan → fitur → FAQ.
- * Semua gaya memakai kelas yang sudah ada di style.css (about-*, cascade-*).
- * ===================================================================== */
+import { icon } from "../icons.js";
+import { footerHtml } from "../footer.js";
 
-import { icon } from '../icons.js';
-import { footerHtml } from '../footer.js';
-
-const ABOUT_CARDS = [
-  {
-    icon: 'sprout',
-    title: 'Revitalisasi Bahasa Daerah',
-    desc: 'Upaya bersama menghidupkan kembali bahasa daerah yang makin jarang dipakai anak muda, lewat pelatihan, materi ajar, dan kegiatan di sekolah — supaya kekayaan bahasa dan budaya lokal tidak punah.',
-  },
-  {
-    icon: 'handshake',
-    title: 'Apa Itu Pengimbasan?',
-    desc: 'Model penyebaran ilmu berjenjang: guru yang sudah dilatih menularkan materi ke guru lain di sekolahnya, lalu bersama-sama mengajarkannya ke siswa — sehingga jangkauan revitalisasi bahasa terus meluas.',
-  },
-];
-
-const CASCADE = [
-  {
-    icon: 'award',
-    title: 'Guru Utama',
-    desc: 'Mengikuti pelatihan langsung dalam program Revitalisasi Bahasa Daerah.',
-  },
-  {
-    icon: 'user',
-    title: 'Guru Imbas',
-    desc: 'Menerima pengimbasan materi Bahasa Melayu Riau dari Guru Utama di sekolahnya.',
-  },
-  {
-    icon: 'graduation',
-    title: 'Siswa Imbas',
-    desc: 'Belajar Bahasa Melayu Riau di kelas bersama guru yang telah terimbas.',
-  },
-];
-
-// FAQ di halaman Tentang dibuat BEDA dari FAQ beranda (tidak ada pertanyaan
-// kembar): beranda fokus ke perkenalan program + cara pakai platform,
-// sedangkan halaman ini fokus ke pendalaman program & peran platform.
-const FAQS = [
-  {
-    q: 'Mengapa bahasa daerah perlu direvitalisasi?',
-    a: 'Karena penggunaan bahasa daerah — termasuk Bahasa Melayu Riau — terus menurun di kalangan generasi muda. Revitalisasi menjaga agar bahasa dan budaya lokal tetap hidup dan diwariskan lewat jalur pendidikan.',
-  },
-  {
-    q: 'Bagaimana platform ini membantu program?',
-    a: 'Platform ini memetakan sejauh mana pengimbasan telah menjangkau guru dan siswa di 12 kabupaten/kota se-Provinsi Riau, sehingga perkembangan revitalisasi bahasa bisa dipantau bersama oleh pendidik dan pemangku kepentingan.',
-  },
-  {
-    q: 'Di mana saja pengimbasan sudah berjalan?',
-    a: 'Pengimbasan telah berjalan di 12 kabupaten/kota se-Provinsi Riau. Buka halaman Peta untuk melihat sebaran serta jumlah guru dan siswa terimbas di setiap wilayah.',
-  },
-];
-
-// Section FAQ hanya dirender bila ada pertanyaan (dikondisikan).
-const faqSection = FAQS.length
-  ? `
-      <section class="section-block reveal" aria-label="Pertanyaan umum">
-        <h2 class="section-title">Pertanyaan Umum</h2>
-        <div class="faq-list">
-          ${FAQS.map(
-            (f) => `
-            <div class="faq-item">
-              <button type="button" class="faq-q" aria-expanded="false">
-                <span>${f.q}</span>
-                <span class="faq-icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-a"><p>${f.a}</p></div>
-            </div>
-          `
-          ).join('')}
-        </div>
-      </section>`
-  : '';
+/*
+ * Sesuaikan path gambar dengan folder asset project kamu.
+ * Contoh:
+ * /assets/images/pcr.jpg
+ * /assets/images/bbpr.jpg
+ */
+const ABOUT_IMAGES = {
+  pcr: "/assets/images/pcr.jpg",
+  bbpr: "/assets/images/bbpr.jpeg",
+  logoPcr: "/assets/images/logo-pcr.jpg",
+  logoBbpr: "/assets/images/logo-bbpr.png",
+};
 
 export function renderTantang(container) {
   container.innerHTML = `
-    <div class="page-tantang">
-      <section class="tantang-hero">
-        <span class="hero-badge"><span class="live-dot" aria-hidden="true"></span>${icon('book')}Revitalisasi Bahasa Daerah · Bahasa Melayu Riau</span>
-        <h1>Tentang Program &amp; Pengimbasan</h1>
-        <p class="tantang-lead">
-          Platform ini dibangun untuk mendukung <b>Revitalisasi Bahasa Daerah</b> —
-          program nasional menjaga bahasa daerah, termasuk <b>Bahasa Melayu Riau</b>,
-          agar tetap hidup dan diwariskan ke generasi berikutnya lewat jalur pendidikan.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/peta" data-route="/peta">Buka Peta</a>
-          <a class="btn btn-outline" href="/form" data-route="/form">Input Data</a>
+    <div class="page-tentang">
+
+      <!-- =========================
+           HERO
+      ========================== -->
+      <section class="tentang-hero">
+
+        <div class="hero-watermark" aria-hidden="true">
+          Tentang
         </div>
-      </section>
 
-      <div class="motif-divider" aria-hidden="true"></div>
+        <div class="tentang-hero-content">
 
-      <section class="about-program reveal" aria-label="Konsep dan alur pengimbasan">
-        <div class="about-pattern" aria-hidden="true"></div>
-        <div class="about-inner">
-          <span class="about-eyebrow">Kenali Lebih Jauh</span>
-          <h2 class="section-title">Konsep &amp; Alur Pengimbasan</h2>
-          <p class="about-lead">
-            Platform ini memetakan sejauh mana pengimbasan telah menjangkau
-            <b>guru dan siswa</b> di <b>12 kabupaten/kota</b> se-Provinsi Riau —
-            dari pelatihan Guru Utama hingga pembelajaran di kelas.
+          <span class="tentang-eyebrow">
+            Tentang Kami
+          </span>
+
+          <h1>
+            Tentang Kami
+          </h1>
+
+          <p>
+            <strong>SABARA</strong> merupakan hasil kolaborasi antara
+            <strong>Balai Bahasa Provinsi Riau</strong> dan
+            <strong>Politeknik Caltex Riau.</strong>
+            Kami berkomitmen menghadirkan platform untuk mendukung
+            <strong>Revitalisasi Bahasa Melayu Riau</strong>
+            melalui teknologi digital yang modern dan mudah diakses.
           </p>
 
-          <div class="about-grid">
-            ${ABOUT_CARDS.map(
-              (c) => `
-              <article class="about-card">
-                <span class="about-icon" aria-hidden="true">${icon(c.icon)}</span>
-                <h3>${c.title}</h3>
-                <p>${c.desc}</p>
-              </article>
-            `
-            ).join('')}
-          </div>
+        </div>
 
-          <div class="cascade-flow">
-            ${CASCADE.map(
-              (c, i) => `
-              ${i > 0 ? '<span class="cascade-arrow" aria-hidden="true">→</span>' : ''}
-              <div class="cascade-step">
-                <span class="cascade-icon" aria-hidden="true">${icon(c.icon)}</span>
-                <b>${c.title}</b>
-                <span>${c.desc}</span>
+      </section>
+
+
+      <!-- =========================
+           KOLABORASI
+      ========================== -->
+      <section class="kolaborasi-section reveal">
+
+        <div class="kolaborasi-card">
+
+          <!-- IMAGE -->
+          <div class="kolaborasi-image">
+
+            <div class="image-collage">
+
+              <div class="collage-item">
+                <img
+                  src="${ABOUT_IMAGES.pcr}"
+                  alt="Politeknik Caltex Riau"
+                />
+
+                <span class="image-label">
+                  KAMPUS PCR
+                </span>
               </div>
-            `
-            ).join('')}
+
+              <div class="collage-item">
+                <img
+                  src="${ABOUT_IMAGES.bbpr}"
+                  alt="Balai Bahasa Provinsi Riau"
+                />
+
+                <span class="image-label">
+                  KANTOR BBPR
+                </span>
+              </div>
+
+            </div>
+
           </div>
 
-          <p class="about-note">Peta &amp; statistik di platform ini menunjukkan sejauh mana pengimbasan tersebut telah menjangkau guru dan siswa di 12 kabupaten/kota se-Riau.</p>
-        </div>
-      </section>
 
-      ${faqSection}
+          <!-- CONTENT -->
+          <div class="kolaborasi-content">
 
-      <section class="cta-band reveal">
-        <h2>Siap melihat datanya?</h2>
-        <p>Buka peta untuk menjelajah, atau isi form untuk menambah data pengimbasan.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/peta" data-route="/peta">Buka Peta</a>
-          <a class="btn btn-light" href="/form" data-route="/form">Input Data</a>
-        </div>
-      </section>
+            <span class="section-badge">
+              Kolaborasi
+            </span>
+
+            <h2>
+              Kolaborasi Akademik
+              <br />
+              &amp;
+              <span>Pelestarian Budaya</span>
+            </h2>
+
+            <p>
+              Pengembangan <strong>KEMALA</strong> merupakan platform memetakan sejauh mana 
+              revitalisasi bahasa melayu menjangkau seluruh kabupaten/kota se-Provinsi Riau untuk
+              menampilkan pemetaan dan data revitalisasi bahasa melayu yang modern.
+            </p>
+
+            <p>
+              Proyek ini merupakan wujud nyata integrasi antara
+              <strong>Politeknik Caltex Riau</strong> dan
+              <strong>Balai Bahasa Provinsi Riau</strong> dalam
+              mendigitalisasi kekayaan bahasa daerah.
+            </p>
+
+
+            <!-- DAFTAR DEVELOPER -->
+<div class="developers-grid">
+
+  <!-- DEVELOPER 1 -->
+  <div class="developer-info">
+    <div class="developer-icon">
+      ${icon("code")}
     </div>
+
+    <div class="developer-text">
+      <span>DEVELOPER</span>
+      <strong>Muhammad Afif Jumardi</strong>
+    </div>
+  </div>
+
+  <!-- DEVELOPER 2 -->
+  <div class="developer-info">
+    <div class="developer-icon">
+      ${icon("code")}
+    </div>
+
+    <div class="developer-text">
+      <span>DEVELOPER</span>
+      <strong>Muhammad Afif Jumardi</strong>
+    </div>
+  </div>
+
+  <!-- DEVELOPER 3 -->
+  <div class="developer-info">
+    <div class="developer-icon">
+      ${icon("code")}
+    </div>
+
+    <div class="developer-text">
+      <span>DEVELOPER</span>
+      <strong>Muhammad Afif Jumardi</strong>
+    </div>
+  </div>
+
+  <!-- DEVELOPER 4 -->
+  <div class="developer-info">
+    <div class="developer-icon">
+      ${icon("code")}
+    </div>
+
+    <div class="developer-text">
+      <span>DEVELOPER</span>
+      <strong>Muhammad Afif Jumardi</strong>
+    </div>
+  </div>
+
+</div>
+
+
+            <!-- LOGOS -->
+            <div class="institution-logos">
+
+              <div class="logo-wrapper">
+                <img
+                  src="${ABOUT_IMAGES.logoPcr}"
+                  alt="Logo Politeknik Caltex Riau"
+                />
+              </div>
+
+              <div class="logo-divider"></div>
+
+              <div class="logo-wrapper logo-bbpr">
+                <img
+                  src="${ABOUT_IMAGES.logoBbpr}"
+                  alt="Logo Balai Bahasa Provinsi Riau"
+                />
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </div>
+
     ${footerHtml()}
   `;
 
   observeReveals(container);
-  setupFaq(container);
 }
 
-/** Accordion FAQ: satu pertanyaan terbuka dalam satu waktu. */
-function setupFaq(root) {
-  const items = root.querySelectorAll('.faq-item');
-  items.forEach((item) => {
-    const q = item.querySelector('.faq-q');
-    if (!q) return;
-    q.addEventListener('click', () => {
-      const isOpen = item.classList.contains('is-open');
-      items.forEach((other) => {
-        other.classList.remove('is-open');
-        const otherQ = other.querySelector('.faq-q');
-        if (otherQ) otherQ.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('is-open');
-        q.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-}
+/* ==========================================
+   SCROLL REVEAL
+========================================== */
 
-/** Animasi scroll-reveal: fade + slide masuk saat elemen terlihat. */
 function observeReveals(root) {
-  const els = root.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) {
-    els.forEach((el) => el.classList.add('is-visible'));
+  const els = root.querySelectorAll(".reveal");
+
+  if (!("IntersectionObserver" in window)) {
+    els.forEach((el) => {
+      el.classList.add("is-visible");
+    });
+
     return;
   }
+
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
+          entry.target.classList.add("is-visible");
+
           io.unobserve(entry.target);
         }
       });
     },
-    { threshold: 0.12 }
+    {
+      threshold: 0.12,
+    },
   );
-  els.forEach((el) => io.observe(el));
+
+  els.forEach((el) => {
+    io.observe(el);
+  });
 }
