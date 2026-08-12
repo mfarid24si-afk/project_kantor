@@ -64,14 +64,15 @@ export async function fetchRowsByKabupaten(tableName, kabupaten) {
   return res.json();
 }
 
-/** Kirim satu baris data ke tabel (POST) — header identik dengan GET (FR-5.2).
- * Catatan: response body POST bisa kosong (body hanya error bila gagal),
- * jadi cukup cek status — JANGAN diparse sebagai JSON agar data yang
- * tersimpan sukses tidak salah dilaporkan sebagai gagal. */
-export async function insertBaris(tableName, payload) {
+/** POST payload (satu baris ATAU array baris untuk bulk) ke tabel — header
+ * identik dengan GET (FR-5.2). Catatan: response body POST bisa kosong (body
+ * hanya error bila gagal), jadi cukup cek status — JANGAN diparse sebagai
+ * JSON agar data yang tersimpan sukses tidak salah dilaporkan sebagai gagal.
+ * `return=minimal` memangkas response (tidak perlu mengembalikan baris). */
+async function postRows(tableName, payload) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}`, {
     method: 'POST',
-    headers: supabaseHeaders(),
+    headers: { ...supabaseHeaders(), Prefer: 'return=minimal' },
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
@@ -79,4 +80,14 @@ export async function insertBaris(tableName, payload) {
     throw new Error(`Supabase insert gagal: ${res.status} — ${detail.slice(0, 200)}`);
   }
   return true;
+}
+
+/** Kirim satu baris data ke tabel (POST) — dipakai Form. */
+export async function insertBaris(tableName, payload) {
+  return postRows(tableName, payload);
+}
+
+/** Kirim banyak baris sekaligus (bulk insert untuk upload CSV). */
+export async function insertBanyakBaris(tableName, rows) {
+  return postRows(tableName, rows);
 }
