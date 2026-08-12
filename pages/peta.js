@@ -232,6 +232,11 @@ export function renderPeta(container) {
         </div>
       </div>
       <p class="popup-total">Total <b>${(guru + siswa).toLocaleString('id-ID')}</b> data terdata</p>
+      <div class="popup-actions">
+        <a class="btn btn-outline" href="/kabupaten/${encodeURIComponent(name)}" data-route>
+          Lihat detail ${escapeHtml(name)}
+        </a>
+      </div>
     `;
   }
 

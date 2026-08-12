@@ -1607,6 +1607,16 @@ button {
   color: var(--ink);
 }
 
+.popup-actions {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.popup-actions .btn {
+  font-size: 0.82rem;
+  padding: 8px 12px;
+}
+
 /* Responsif peta: desktop panel samping, mobile panel di bawah */
 @media (max-width: 860px) {
   .page-peta {
@@ -1636,6 +1646,112 @@ button {
   margin: 0 auto;
   padding: var(--space-6) 20px 56px;
   min-height: calc(100vh - var(--nav-h));
+}
+
+.page-kabupaten {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-6) 20px 56px;
+  min-height: calc(100vh - var(--nav-h));
+}
+
+.kabupaten-hero {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+  margin-bottom: var(--space-5);
+}
+
+.kabupaten-hero h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 2.5vw, 2.75rem);
+}
+
+.kabupaten-lead {
+  margin: 0 0 20px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.kabupaten-summary {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.kabupaten-summary .mini-stat {
+  flex: 1 1 220px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.kabupaten-summary .mini-stat b {
+  display: block;
+  font-size: 2rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.detail-section {
+  margin-top: var(--space-6);
+}
+
+.detail-section h2 {
+  margin-bottom: var(--space-3);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--space-5);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.data-table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.data-table th,
+.data-table td {
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.data-table tbody tr:nth-child(odd) {
+  background: var(--paper);
+}
+
+.status-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.status-card--warn {
+  border-color: var(--accent-soft);
+  background: rgba(253, 236, 234, 0.85);
 }
 
 .form-card {

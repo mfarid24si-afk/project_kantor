@@ -54,6 +54,16 @@ export async function fetchJumlahSiswaPerKabupaten() {
   return hitungPerKabupaten(await fetchKolom(TABEL_SISWA, KOLOM_KABUPATEN));
 }
 
+/** Ambil baris data lengkap untuk sebuah kabupaten. */
+export async function fetchRowsByKabupaten(tableName, kabupaten) {
+  const url = `${SUPABASE_URL}/rest/v1/${tableName}?select=*&kabupaten=eq.${encodeURIComponent(kabupaten)}`;
+  const res = await fetch(url, { headers: supabaseHeaders() });
+  if (!res.ok) {
+    throw new Error(`Supabase fetch gagal: ${res.status}`);
+  }
+  return res.json();
+}
+
 /** Kirim satu baris data ke tabel (POST) — header identik dengan GET (FR-5.2).
  * Catatan: response body POST bisa kosong (body hanya error bila gagal),
  * jadi cukup cek status — JANGAN diparse sebagai JSON agar data yang

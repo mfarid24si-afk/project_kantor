@@ -9,20 +9,15 @@ import { renderHome } from './pages/home.js';
 import { renderPeta } from './pages/peta.js';
 import { renderForm } from './pages/form.js';
 import { renderTantang } from './pages/tantang.js';
+import { renderKabupaten } from './pages/kabupaten.js';
 
-const routes = {
-  '/': renderHome,
-  '/peta': renderPeta,
-  '/form': renderForm,
-  '/tentang': renderTantang,
-};
-
-const titles = {
-  '/': 'Peta Guru & Siswa — Provinsi Riau',
-  '/peta': 'Peta — Guru & Siswa Riau',
-  '/form': 'Form Input — Guru & Siswa Riau',
-  '/tentang': 'Tentang — Guru & Siswa Riau',
-};
+const routes = [
+  { path: '/', render: renderHome, title: 'Peta Guru & Siswa — Provinsi Riau' },
+  { path: '/peta', render: renderPeta, title: 'Peta — Guru & Siswa Riau' },
+  { path: '/form', render: renderForm, title: 'Form Input — Guru & Siswa Riau' },
+  { path: '/tentang', render: renderTantang, title: 'Tentang — Guru & Siswa Riau' },
+  { path: '/kabupaten/:name', render: renderKabupaten, title: (params) => `Detail ${params.name} — Guru & Siswa Riau` },
+];
 
 let currentCleanup = null;
 
@@ -30,6 +25,36 @@ function normalizePath(path) {
   let p = path || '/';
   if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
   return p;
+}
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function matchRoute(path) {
+  for (const route of routes) {
+    if (route.path === path) {
+      return { route, params: {} };
+    }
+
+    if (route.path.includes('/:')) {
+      const parts = route.path.split('/');
+      const pattern = parts
+        .map((segment) => (segment.startsWith(':') ? '([^/]+)' : escapeRegex(segment)))
+        .join('/');
+      const regex = new RegExp(`^${pattern}$`);
+      const match = path.match(regex);
+      if (match) {
+        const params = {};
+        const keys = parts.filter((segment) => segment.startsWith(':')).map((segment) => segment.slice(1));
+        keys.forEach((key, index) => {
+          params[key] = decodeURIComponent(match[index + 1]);
+        });
+        return { route, params };
+      }
+    }
+  }
+  return { route: routes[0], params: {} };
 }
 
 function updateActiveNav(path) {
@@ -49,14 +74,14 @@ function renderRoute() {
   }
 
   const path = normalizePath(window.location.pathname);
-  const render = routes[path] || routes['/'];
+  const { route, params } = matchRoute(path);
 
   const container = document.getElementById('app');
   container.innerHTML = '';
-  const cleanup = render(container);
+  const cleanup = route.render(container, params);
   if (typeof cleanup === 'function') currentCleanup = cleanup;
 
-  document.title = titles[path] || titles['/'];
+  document.title = typeof route.title === 'function' ? route.title(params) : route.title;
   updateActiveNav(path);
   window.scrollTo(0, 0);
 }
