@@ -1330,6 +1330,9 @@ button {
 /* =========================================================
    FEATURES
    ========================================================= */
+/* =========================================================
+   FEATURES
+   ========================================================= */
 
 .page-home .feature-grid {
   display: grid;
@@ -1338,10 +1341,17 @@ button {
     repeat(3, 1fr);
 
   gap: 20px;
+
+  /* Jangan membuat semua card mengikuti tinggi card terpanjang */
+  align-items: start;
 }
 
 
 .page-home .feature-card {
+  align-self: start;
+
+  height: fit-content;
+
   padding: 28px 25px;
 
   border: 1px solid #e1e7ef;
