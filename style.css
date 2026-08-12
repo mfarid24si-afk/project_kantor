@@ -13,7 +13,7 @@
   /* --- Warna (token) --- */
   --ink: #1e3350;
   --ink-soft: #4a5a75;
-  --paper: #f7f2e7;
+  --paper: #ffffff;
   --panel: #ffffff;
   --line: #e6ddc8;
   --primary: #2560d0;          /* rasio putih ≥ 5.7:1 (AA) */
@@ -26,9 +26,7 @@
   --muted: #5a6270;            /* ≥ 5.5:1 di atas krem (AA) */
   --danger: #b3372b;
   --success: #2f7d4f;
-  --gold: #c9962f;
-  --gold-dark: #8a6317;
-  --gold-soft: #f7ecd3;
+  
 
   /* --- Bayangan --- */
   --shadow-sm: 0 1px 3px rgba(28, 53, 89, 0.08), 0 1px 2px rgba(28, 53, 89, 0.06);
@@ -2177,4 +2175,701 @@ button {
   .cascade-arrow {
     transform: rotate(90deg);
   }
+}
+
+/* =========================================================
+   HALAMAN TENTANG
+========================================================= */
+
+.page-tentang {
+  min-height: 100vh;
+  background: #f7f9fc;
+  color: #111827;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.tentang-hero {
+  position: relative;
+  min-height: 420px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(37, 99, 235, 0.025),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(37, 99, 235, 0.04),
+      transparent 30%
+    ),
+    #ffffff;
+}
+
+
+.tentang-hero-content {
+  position: relative;
+  z-index: 2;
+
+  width: min(900px, 90%);
+
+  text-align: center;
+
+  padding: 90px 20px 70px;
+}
+
+
+.tentang-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 14px;
+
+  color: #2161ed;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: 5px;
+}
+
+
+.tentang-hero h1 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 1;
+
+  font-weight: 900;
+
+  letter-spacing: -3px;
+}
+
+
+.tentang-hero p {
+  max-width: 900px;
+
+  margin: 28px auto 0;
+
+  color: #667895;
+
+  font-size: 19px;
+  line-height: 1.7;
+
+  font-weight: 500;
+}
+
+
+.tentang-hero p strong {
+  color: #151d32;
+  font-weight: 800;
+}
+
+
+/* tulisan besar transparan */
+
+.hero-watermark {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  font-size: clamp(100px, 15vw, 190px);
+
+  font-weight: 900;
+
+  letter-spacing: -8px;
+
+  color: rgba(20, 30, 50, 0.035);
+
+  pointer-events: none;
+
+  user-select: none;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   KOLABORASI SECTION
+========================================================= */
+
+.kolaborasi-section {
+  padding: 55px 30px 80px;
+
+  background: #f7f9fc;
+}
+
+
+.kolaborasi-card {
+  width: min(1240px, 100%);
+
+  min-height: 680px;
+
+  margin: auto;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1.25fr;
+
+  align-items: center;
+
+  gap: 50px;
+
+  padding: 52px;
+
+  border: 1px solid #dfe6ef;
+
+  border-radius: 42px;
+
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(37, 99, 235, 0.045),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #eef6ff,
+      #f8fbff
+    );
+
+  box-shadow:
+    0 12px 40px rgba(15, 23, 42, 0.05);
+}
+
+
+/* =========================================================
+   IMAGE COLLAGE
+========================================================= */
+
+.kolaborasi-image {
+  width: 100%;
+}
+
+
+.image-collage {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  height: 400px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 18px 35px rgba(15, 23, 42, 0.14);
+}
+
+
+.collage-item {
+  position: relative;
+
+  height: 100%;
+
+  overflow: hidden;
+}
+
+
+.collage-item:first-child {
+  transform: skewY(-1deg) scale(1.02);
+}
+
+
+.collage-item:last-child {
+  transform: skewY(1deg) scale(1.02);
+}
+
+
+.collage-item img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition: transform 0.5s ease;
+}
+
+
+.collage-item:hover img {
+  transform: scale(1.05);
+}
+
+
+/* label foto */
+
+.image-label {
+  position: absolute;
+
+  bottom: 18px;
+  left: 18px;
+
+  padding: 8px 14px;
+
+  border-radius: 5px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  color: #172033;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.kolaborasi-content {
+  padding-right: 20px;
+}
+
+
+.section-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 8px 16px;
+
+  border: 1px solid #dbe4f0;
+
+  border-radius: 30px;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  color: #2161ed;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: 4px;
+
+  box-shadow:
+    0 3px 10px rgba(15, 23, 42, 0.04);
+}
+
+
+.kolaborasi-content h2 {
+  margin: 25px 0 28px;
+
+  color: #111827;
+
+  font-size: clamp(38px, 4vw, 56px);
+
+  line-height: 1.05;
+
+  font-weight: 900;
+
+  letter-spacing: -2px;
+}
+
+
+.kolaborasi-content h2 span {
+  color: #2161ed;
+}
+
+
+.kolaborasi-content > p {
+  max-width: 620px;
+
+  margin: 0 0 20px;
+
+  color: #667895;
+
+  font-size: 17px;
+
+  line-height: 1.7;
+}
+
+
+.kolaborasi-content > p strong {
+  color: #182033;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DEVELOPER
+========================================================= */
+.developers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 40px;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.developer-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.developer-icon {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #10182f;
+  color: white;
+  border-radius: 14px;
+}
+
+.developer-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.developer-text span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #94a3b8;
+}
+
+.developer-text strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+
+/* =========================================================
+   LOGO INSTITUSI
+========================================================= */
+
+.institution-logos {
+  display: flex;
+
+  align-items: center;
+
+  gap: 25px;
+
+  margin-top: 48px;
+}
+
+
+.logo-wrapper {
+  height: 65px;
+
+  display: flex;
+
+  align-items: center;
+}
+
+
+.logo-wrapper img {
+  max-width: 120px;
+  max-height: 65px;
+
+  object-fit: contain;
+}
+
+
+.logo-wrapper.logo-bbpr img {
+  max-width: 300px;
+}
+
+
+.logo-divider {
+  width: 1px;
+  height: 55px;
+
+  background: #d9e1eb;
+}
+
+
+/* =========================================================
+   INFO SECTION
+========================================================= */
+
+.tentang-info {
+  width: min(1150px, 90%);
+
+  margin: 20px auto 100px;
+
+  padding-top: 30px;
+}
+
+
+.info-heading {
+  max-width: 700px;
+
+  margin-bottom: 45px;
+}
+
+
+.info-heading h2 {
+  margin: 20px 0 15px;
+
+  color: #111827;
+
+  font-size: clamp(34px, 4vw, 48px);
+
+  line-height: 1.1;
+
+  font-weight: 900;
+
+  letter-spacing: -2px;
+}
+
+
+.info-heading h2 span {
+  color: #2161ed;
+}
+
+
+.info-heading p {
+  color: #667895;
+
+  font-size: 17px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   INFO CARDS
+========================================================= */
+
+.info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 22px;
+}
+
+
+.info-card {
+  padding: 30px;
+
+  border: 1px solid #e1e7ef;
+
+  border-radius: 24px;
+
+  background: white;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+.info-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.08);
+}
+
+
+.info-card-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  border-radius: 15px;
+
+  background: #eaf1ff;
+
+  color: #2161ed;
+}
+
+
+.info-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+
+.info-card h3 {
+  margin: 0 0 10px;
+
+  color: #182033;
+
+  font-size: 19px;
+}
+
+
+.info-card p {
+  margin: 0;
+
+  color: #71809a;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+.reveal {
+  opacity: 0;
+
+  transform: translateY(25px);
+
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+
+.reveal.is-visible {
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .kolaborasi-card {
+    grid-template-columns: 1fr;
+
+    padding: 35px;
+
+    gap: 40px;
+  }
+
+  .kolaborasi-content {
+    padding-right: 0;
+  }
+
+  .image-collage {
+    height: 350px;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .tentang-hero {
+    min-height: 380px;
+  }
+
+  .tentang-hero-content {
+    padding: 70px 15px 60px;
+  }
+
+  .tentang-hero h1 {
+    font-size: 48px;
+
+    letter-spacing: -2px;
+  }
+
+  .tentang-hero p {
+    font-size: 16px;
+  }
+
+  .hero-watermark {
+    font-size: 90px;
+  }
+
+
+  .kolaborasi-section {
+    padding: 30px 15px 60px;
+  }
+
+
+  .kolaborasi-card {
+    padding: 22px;
+
+    border-radius: 28px;
+  }
+
+
+  .image-collage {
+    height: 260px;
+
+    border-radius: 15px;
+  }
+
+
+  .kolaborasi-content h2 {
+    font-size: 36px;
+  }
+
+
+  .kolaborasi-content > p {
+    font-size: 15px;
+  }
+
+
+  .institution-logos {
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+    margin-top: 35px;
+  }
+
+
+  .logo-wrapper img {
+    max-width: 90px;
+  }
+
+
+  .logo-wrapper.logo-bbpr img {
+    max-width: 220px;
+  }
+
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .tentang-info {
+    width: calc(100% - 30px);
+
+    margin-bottom: 60px;
+  }
+
 }
