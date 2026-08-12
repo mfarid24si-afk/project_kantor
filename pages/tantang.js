@@ -124,48 +124,48 @@ export function renderTantang(container) {
   <!-- DEVELOPER 1 -->
   <div class="developer-info">
     <div class="developer-icon">
-      ${icon("code")}
+      ${icon("user")}
     </div>
 
     <div class="developer-text">
       <span>DEVELOPER</span>
-      <strong>Muhammad Afif Jumardi</strong>
+      <strong>Noval Nugraha</strong>
     </div>
   </div>
 
   <!-- DEVELOPER 2 -->
   <div class="developer-info">
     <div class="developer-icon">
-      ${icon("code")}
+      ${icon("user")}
     </div>
 
     <div class="developer-text">
       <span>DEVELOPER</span>
-      <strong>Muhammad Afif Jumardi</strong>
+      <strong>Muhammad Majid Avindra</strong>
     </div>
   </div>
 
   <!-- DEVELOPER 3 -->
   <div class="developer-info">
     <div class="developer-icon">
-      ${icon("code")}
+      ${icon("user")}
     </div>
 
     <div class="developer-text">
       <span>DEVELOPER</span>
-      <strong>Muhammad Afif Jumardi</strong>
+      <strong>Rifky Faerana Alfarizi</strong>
     </div>
   </div>
 
   <!-- DEVELOPER 4 -->
   <div class="developer-info">
     <div class="developer-icon">
-      ${icon("code")}
+      ${icon("user")}
     </div>
 
     <div class="developer-text">
       <span>DEVELOPER</span>
-      <strong>Muhammad Afif Jumardi</strong>
+      <strong>M.Farid Fadillah</strong>
     </div>
   </div>
 
