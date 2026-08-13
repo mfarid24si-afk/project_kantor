@@ -4461,3 +4461,392 @@ button {
   }
 
 }
+
+/* =====================================================
+   LOGO KABUPATEN / KOTA RIAU
+   ===================================================== */
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   FLOATING LOGOS
+   ========================================================= */
+
+.floating-logos {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+
+/* =========================================================
+   LOGO CARD
+   ========================================================= */
+
+.floating-logo {
+  position: absolute;
+
+  width: 72px;
+  height: 72px;
+
+  padding: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.68);
+
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 12px 30px rgba(30, 64, 175, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.035);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  animation: floatingLogo 5s ease-in-out infinite;
+}
+
+
+/* LOGO */
+.floating-logo img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  display: block;
+}
+
+
+/* =========================================================
+   POSISI LOGO KIRI
+   ========================================================= */
+
+.fl-1 {
+  left: 7%;
+  top: 24%;
+
+  width: 68px;
+  height: 68px;
+
+  animation-delay: -0.5s;
+}
+
+.fl-2 {
+  left: 15%;
+  top: 42%;
+
+  width: 78px;
+  height: 78px;
+
+  animation-delay: -2s;
+}
+
+.fl-3 {
+  left: 5%;
+  top: 58%;
+
+  width: 62px;
+  height: 62px;
+
+  animation-delay: -3.5s;
+}
+
+.fl-4 {
+  left: 19%;
+  top: 68%;
+
+  width: 70px;
+  height: 70px;
+
+  animation-delay: -1.2s;
+}
+
+.fl-5 {
+  left: 11%;
+  top: 78%;
+
+  width: 58px;
+  height: 58px;
+
+  animation-delay: -4s;
+}
+
+.fl-6 {
+  left: 24%;
+  top: 27%;
+
+  width: 56px;
+  height: 56px;
+
+  animation-delay: -2.8s;
+}
+
+
+/* =========================================================
+   POSISI LOGO KANAN
+   ========================================================= */
+
+.fl-7 {
+  right: 7%;
+  top: 23%;
+
+  width: 66px;
+  height: 66px;
+
+  animation-delay: -1.8s;
+}
+
+.fl-8 {
+  right: 16%;
+  top: 40%;
+
+  width: 76px;
+  height: 76px;
+
+  animation-delay: -3.2s;
+}
+
+.fl-9 {
+  right: 5%;
+  top: 57%;
+
+  width: 60px;
+  height: 60px;
+
+  animation-delay: -0.8s;
+}
+
+.fl-10 {
+  right: 19%;
+  top: 67%;
+
+  width: 72px;
+  height: 72px;
+
+  animation-delay: -2.5s;
+}
+
+.fl-11 {
+  right: 11%;
+  top: 78%;
+
+  width: 58px;
+  height: 58px;
+
+  animation-delay: -4.3s;
+}
+
+.fl-12 {
+  right: 24%;
+  top: 28%;
+
+  width: 54px;
+  height: 54px;
+
+  animation-delay: -1.4s;
+}
+
+
+/* =========================================================
+   ANIMASI FLOATING
+   ========================================================= */
+
+@keyframes floatingLogo {
+
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate3d(3px, -9px, 0) rotate(1deg);
+  }
+
+  50% {
+    transform: translate3d(-2px, -17px, 0) rotate(-1deg);
+  }
+
+  75% {
+    transform: translate3d(3px, -8px, 0) rotate(1deg);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+}
+
+
+/* =========================================================
+   HERO CONTENT DI DEPAN LOGO
+   ========================================================= */
+
+.hero-content {
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =========================================================
+   SUPAYA LOGO TIDAK TERLALU MENONJOL
+   ========================================================= */
+
+.floating-logo {
+  opacity: 0.82;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .floating-logo {
+    transform: scale(0.85);
+  }
+
+  .fl-1 {
+    left: 4%;
+  }
+
+  .fl-2 {
+    left: 10%;
+  }
+
+  .fl-3 {
+    left: 3%;
+  }
+
+  .fl-4 {
+    left: 13%;
+  }
+
+  .fl-5 {
+    left: 7%;
+  }
+
+  .fl-6 {
+    left: 17%;
+  }
+
+
+  .fl-7 {
+    right: 4%;
+  }
+
+  .fl-8 {
+    right: 10%;
+  }
+
+  .fl-9 {
+    right: 3%;
+  }
+
+  .fl-10 {
+    right: 13%;
+  }
+
+  .fl-11 {
+    right: 7%;
+  }
+
+  .fl-12 {
+    right: 17%;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .floating-logo {
+    width: 50px !important;
+    height: 50px !important;
+    padding: 7px;
+  }
+
+  .fl-6,
+  .fl-12 {
+    display: none;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .floating-logos {
+    opacity: 0.45;
+  }
+
+  .floating-logo {
+    width: 42px !important;
+    height: 42px !important;
+    padding: 6px;
+
+    border-radius: 14px;
+  }
+
+  /* Logo yang terlalu dekat dengan konten disembunyikan */
+  .fl-2,
+  .fl-4,
+  .fl-6,
+  .fl-8,
+  .fl-10,
+  .fl-12 {
+    display: none;
+  }
+
+  .fl-1 {
+    left: 3%;
+  }
+
+  .fl-3 {
+    left: 2%;
+  }
+
+  .fl-5 {
+    left: 5%;
+  }
+
+  .fl-7 {
+    right: 3%;
+  }
+
+  .fl-9 {
+    right: 2%;
+  }
+
+  .fl-11 {
+    right: 5%;
+  }
+
+}

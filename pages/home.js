@@ -230,31 +230,64 @@ export function renderHome(container) {
           </div>
 
 
-          <!-- HIGHLIGHTS -->
-
-          <div class="hero-highlights">
-
-            ${HIGHLIGHTS.map(
-              (h) => `
-                <span class="highlight">
-
-                  ${icon(h.icon)}
-
-                  ${h.text}
-
-                </span>
-              `,
-            ).join("")}
-
-          </div>
-
-
-        </div>
+          
 
       </section>
+<!-- FLOATING LOGO KABUPATEN / KOTA RIAU -->
+<div class="floating-logos" aria-hidden="true">
+
+  <!-- KIRI -->
+  <div class="floating-logo fl-1">
+    <img src="/assets/images/logo-bengkalis.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-2">
+    <img src="/assets/images/logo-indragiri-hilir.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-3">
+    <img src="/assets/images/logo-indragiri-hulu.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-4">
+    <img src="/assets/images/logo-kampar.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-5">
+    <img src="/assets/images/logo-meranti.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-6">
+    <img src="/assets/images/logo-kuansing.png" alt="">
+  </div>
 
 
+  <!-- KANAN -->
+  <div class="floating-logo fl-7">
+    <img src="/assets/images/logo-pelalawan.png" alt="">
+  </div>
 
+  <div class="floating-logo fl-8">
+    <img src="/assets/images/logo-rohil.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-9">
+    <img src="/assets/images/logo-rohul.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-10">
+    <img src="/assets/images/logo-siak.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-11">
+    <img src="/assets/images/logo-pekanbaru.png" alt="">
+  </div>
+
+  <div class="floating-logo fl-12">
+    <img src="/assets/images/logo-dumai.png" alt="">
+  </div>
+
+</div>
       <!-- ==================================
            STATISTIK
       =================================== -->
@@ -354,16 +387,7 @@ export function renderHome(container) {
         </div>
 
 
-        <p class="stats-live">
-
-          <span
-            class="live-dot"
-            aria-hidden="true"
-          ></span>
-
-          Data diperbarui otomatis dari Supabase
-
-        </p>
+        
 
       </section>
 
