@@ -1,0 +1,75 @@
+
+    <!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="globals.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="html-body" ><div class="top-nav-bar" ><div class="container" ><div class="text" >SABARA</div></div>
+<div class="div" ><div class="link" ><div class="text-wrapper" >BERANDA</div></div>
+<div class="link" ><div class="text-wrapper" >PETA</div></div>
+<div class="link" ><div class="text-wrapper" >INPUT DATA</div></div>
+<div class="link-css-transform" ><div class="div-wrapper" ><div class="text-2" >TENTANG</div></div></div></div>
+<button class="button" ><div class="text-3" >Kontribusi</div></button></div>
+<div class="main" ><div class="hero-section" ><div class="container-wrapper" ><div class="container-2" ><div class="text-4" >Tentang</div></div></div>
+<div class="container-3" ><div class="text-5" >TENTANG KAMI</div>
+<div class="heading" ><div class="text-6" >Tentang Kami</div></div>
+<div class="container-4" ><p class="strong-SABARA" ><span class="span" >SABARA</span>
+<span class="text-wrapper-2" > merupakan hasil kolaborasi antara Balai Bahasa Provinsi Riau dan</span></p>
+<div class="strong" ><div class="text-7" >Politeknik Caltex</div>
+<div class="text-8" >Riau</div></div>
+<p class="p" >. Kami berkomitmen menghadirkan platform untuk mendukung</p>
+<div class="strong-2" ><div class="text-9" >Revitalisasi Bahasa Melayu</div>
+<div class="text-10" >Riau</div></div>
+<p class="text-11" > melalui teknologi digital yang modern dan mudah diakses.</p></div></div></div>
+<div class="section-main-content" ><div class="mission-images" ><div class="container-5" ><div class="background-border" ><div class="text-12" >KOLABORASI</div></div>
+<div class="div-wrapper-2" ><p class="kolaborasi-akademik" ><span class="text-wrapper-3" >Kolaborasi Akademik &amp;<br/></span>
+<span class="span" >Pelestarian Budaya</span></p></div>
+<div class="div-2" ><div class="div-wrapper-2" ><p class="pengembangan-KEMALA" >Pengembangan KEMALA merupakan platform memetakan sejauh<br/>mana revitalisasi bahasa melayu menjangkau seluruh<br/>kabupaten/kota se-Provinsi Riau untuk menampilkan pemetaan<br/>dan data revitalisasi bahasa melayu yang modern.</p></div>
+<div class="container-6" ><p class="text-13" >Proyek ini merupakan wujud nyata integrasi antara</p>
+<div class="strong-3" ><div class="text-14" >Caltex Riau</div>
+<div class="text-15" >Politeknik</div></div>
+<p class="text-16" > dan Balai Bahasa Provinsi Riau dalam mendigitalisasi</p>
+<div class="text-17" >kekayaan bahasa daerah.</div></div></div></div>
+<div class="container-7" ><div class="container-8" ><div class="div-3" ></div>
+<div class="overlay-shadow" ><div class="text-18" >KAMPUS PCR</div></div></div>
+<div class="margin" ><div class="container-9" ><div class="abaxubsyhh" ></div>
+<div class="overlay-shadow" ><div class="text-18" >KANTOR BBPR</div></div></div></div></div></div>
+<div class="separator" ></div>
+<div class="developer-profiles" ><div class="div-wrapper-2" ><div class="text-wrapper-4" >Tim Pengembang</div></div>
+<div class="container-10" ><div class="profile-card" ><div class="container-11" ><div class="background" ><div class="container" ><img class="icon" src="img/icon-5.svg" /></div></div>
+<div class="container" ><div class="div-wrapper-2" ><div class="text-19" >DEVELOPER</div></div>
+<div class="div-wrapper-2" ><div class="text-20" >Noval Nugraha</div></div></div></div></div>
+<div class="profile-card-2" ><div class="container-11" ><div class="background" ><div class="container" ><img class="icon" src="img/icon.svg" /></div></div>
+<div class="container" ><div class="div-wrapper-2" ><div class="text-19" >DEVELOPER</div></div>
+<div class="div-wrapper-2" ><div class="text-21" >Muhammad<br/>Majid Avindra</div></div></div></div></div>
+<div class="profile-card-2" ><div class="container-11" ><div class="background" ><div class="container" ><img class="icon" src="img/icon-3.svg" /></div></div>
+<div class="container" ><div class="div-wrapper-2" ><div class="text-19" >DEVELOPER</div></div>
+<div class="div-wrapper-2" ><div class="text-21" >Rifky Faerana<br/>Alfarizi</div></div></div></div></div>
+<div class="profile-card" ><div class="container-11" ><div class="background" ><div class="container" ><img class="icon" src="img/image.svg" /></div></div>
+<div class="container" ><div class="div-wrapper-2" ><div class="text-19" >DEVELOPER</div></div>
+<div class="div-wrapper-2" ><div class="text-20" >M.Farid Fadillah</div></div></div></div></div></div></div>
+<div class="logos" ><div class="background-border-2" ><div class="abaxuclzfwl" ></div></div>
+<div class="background-border-2" ><div class="div-4" ></div></div></div></div></div>
+<div class="footer-margin" ><footer class="footer" ><div class="container-12" ><div class="container-11" ><div class="container" ><img class="img" src="img/icon-2.svg" /></div>
+<div class="container" ><div class="div-wrapper-2" ><div class="text-22" >Peta Guru &amp; Siswa</div></div>
+<div class="div-wrapper-2" ><div class="text-23" >PROVINSI RIAU</div></div></div></div>
+<div class="bagian-dari-program-wrapper" ><p class="bagian-dari-program" >Bagian dari program Revitalisasi Bahasa Daerah —<br/>memetakan sejauh mana pengimbasan Bahasa<br/>Melayu Riau telah menjangkau guru dan siswa di<br/>seluruh Provinsi Riau.</p></div></div>
+<div class="container-13" ><div class="horizontal-border" ><div class="text-24" >NAVIGASI</div></div>
+<div class="div-2" ><div class="div-wrapper-2" ><div class="text-wrapper-5" >Beranda</div></div>
+<div class="div-wrapper-2" ><div class="text-wrapper-5" >Peta</div></div>
+<div class="div-wrapper-2" ><div class="text-wrapper-5" >Input Data</div></div>
+<div class="div-wrapper-2" ><div class="text-wrapper-6" >Tentang</div></div>
+<div class="div-wrapper-2" ><div class="text-wrapper-5" >Kontak Kami</div></div>
+<div class="div-wrapper-2" ><div class="text-wrapper-5" >Kebijakan Privasi</div></div></div></div>
+<div class="container-14" ><div class="horizontal-border" ><div class="text-25" >ALAMAT<br/>&amp;<br/>LOKASI</div></div>
+<div class="container-15" ><div class="icon-wrapper" ><img class="icon-2" src="img/icon-4.svg" /></div>
+<div class="container-16" ><p class="text-26" >Jalan Binawidya, Kompleks Universitas Riau,<br/>Panam, Pekanbaru, Riau 28292</p></div></div>
+<div class="map-placeholder" ><div class="abaxuawwirmxw" ></div></div></div>
+<div class="horizontal-border-2" ><div class="container" ><p class="text-27" >© 2026 Peta Pengimbasan Guru &amp; Siswa, Politeknik Caltex Riau.</p></div>
+<div class="overlay" ><div class="text-28" >Revitalisasi Bahasa Daerah</div></div></div></footer></div></div>
+</body>
+</html>

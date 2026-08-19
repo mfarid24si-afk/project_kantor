@@ -1,0 +1,73 @@
+
+    <!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="globals.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="html-body" ><div class="top-nav-bar" ><div class="container" ><div class="div" ><div class="container-2" ><img class="icon" src="img/icon-5.svg" /></div>
+<div class="text" >SABARA</div></div>
+<div class="container-3" ><div class="link" ><div class="text-wrapper" >Beranda</div></div>
+<div class="link-css-transform" ><div class="div-wrapper" ><div class="text-2" >Peta</div></div></div>
+<div class="link" ><div class="text-wrapper" >Input Data</div></div>
+<div class="link" ><div class="text-wrapper" >Tentang</div></div></div>
+<button class="button" ><div class="text-3" >Kontribusi</div></button></div></div>
+<div class="main-content-area" ><div class="aside-left-sidebar" ><div class="container-4" ><div class="back-action" ><div class="div" ><div class="container-2" ><img class="img" src="img/icon-8.svg" /></div>
+<div class="container-2" ><div class="text-4" >Kembali ke Beranda</div></div></div></div>
+<header class="header" ><div class="div-2" ><div class="text-wrapper-2" >Sebaran Data Riau</div></div>
+<div class="container-5" ><div class="container-2" ><img class="icon-2" src="img/icon-2.svg" /></div>
+<p class="p" >Perbarui otomatis tiap 15 detik · 07.42.16</p></div></header>
+<div class="quick-stats" ><div class="background" ><div class="container-6" ><div class="text-5" >25</div></div>
+<div class="container-6" ><div class="text-6" >Guru</div></div></div>
+<div class="background-2" ><div class="container-6" ><img class="icon-3" src="img/icon.svg" /></div>
+<div class="container-6" ><div class="text-6" >Siswa</div></div></div></div>
+<div class="div-3" ><div class="div-4" ><div class="div-2" ><div class="text-wrapper-3" >PILIH WILAYAH</div></div>
+<div class="div-2" ><div class="options" ><div class="image-clip" ><div class="image" ><img class="vector" src="img/vector.svg" /></div></div>
+<div class="container-7" ><div class="text-wrapper-4" >— Pilih kabupaten/kota —</div></div></div>
+<div class="icon-wrapper" ><img class="icon-4" src="img/icon-4.svg" /></div></div></div>
+<div class="div-4" ><button class="button-2" ><div class="img-wrapper" ><img class="icon-5" src="img/image.svg" /></div>
+<div class="text-7" >Sembunyikan Peta Dasar</div></button>
+<button class="button-2" ><div class="img-wrapper" ><img class="icon-6" src="img/icon-3.svg" /></div>
+<div class="text-7" >Sembunyikan Poligon</div></button></div></div>
+<div class="legend-regional-list" ><div class="div-3" ><div class="horizontal-border" ><div class="container-8" ><div class="div-2" ><div class="text-8" >WILAYAH</div></div>
+<div class="div-2" ><p class="text-9" >Angka pada legenda = guru · siswa</p></div></div>
+<button class="button-3" ><div class="text-10" >Sembunyikan</div></button></div>
+<div class="div-5" ><div class="item" ><div class="container-9" ><div class="background-shadow" ></div>
+<div class="container-2" ><div class="text-11" >Bengkalis</div></div></div>
+<div class="container-2" ><div class="text-12" >2 · —</div></div></div>
+<div class="item" ><div class="container-9" ><div class="background-shadow-2" ></div>
+<div class="container-2" ><div class="text-11" >Dumai</div></div></div>
+<div class="container-2" ><div class="text-12" >1 · —</div></div></div>
+<div class="item" ><div class="container-9" ><div class="background-shadow-3" ></div>
+<div class="container-2" ><div class="text-11" >Indragiri Hilir</div></div></div>
+<div class="container-2" ><div class="text-12" >3 · —</div></div></div>
+<div class="item" ><div class="container-9" ><div class="background-shadow-4" ></div>
+<div class="container-2" ><div class="text-11" >Indragiri Hulu</div></div></div>
+<div class="container-2" ><div class="text-12" >1 · —</div></div></div>
+<div class="item" ><div class="container-9" ><div class="background-shadow-5" ></div>
+<div class="container-2" ><div class="text-11" >Kampar</div></div></div>
+<div class="container-2" ><div class="text-12" >1 · —</div></div></div></div></div></div></div></div>
+<div class="map-area" ><div class="gradient" ></div>
+<img class="map-controls" src="img/map-controls-overlays-stylized-to-match-earthy-theme.svg" />
+<div class="overlay-shadow" ><div class="text-9" >© OpenStreetMap contributors.</div></div></div></div>
+<div class="footer-margin" ><footer class="footer" ><div class="container-10" ><div class="brand-info" ><div class="container-5" ><div class="container-2" ><img class="icon-7" src="img/icon-6.svg" /></div>
+<div class="text-13" >Peta Guru &amp; Siswa</div></div>
+<div class="div-2" ><div class="text-wrapper-5" >PROVINSI RIAU</div></div>
+<div class="margin" ><div class="bagian-dari-program-wrapper" ><p class="bagian-dari-program" >Bagian dari program Revitalisasi Bahasa Daerah —<br/>memetakan sejauh mana pengimbasan Bahasa<br/>Melayu Riau telah menjangkau guru dan siswa di<br/>seluruh Provinsi Riau.</p></div></div></div>
+<div class="navigation-links" ><div class="horizontal-border-2" ><div class="text-14" >NAVIGASI</div></div>
+<div class="div-5" ><div class="link-beranda" >Beranda</div>
+<div class="link-peta" >Peta</div>
+<div class="text-wrapper-6" >Input Data</div>
+<div class="text-wrapper-6" >Tentang</div></div></div>
+<div class="contact-location" ><div class="horizontal-border-2" ><div class="text-14" >ALAMAT &amp; LOKASI</div></div>
+<div class="container-11" ><div class="container-wrapper" ><div class="container-12" ><img class="icon-8" src="img/icon-7.svg" /></div></div>
+<div class="container-13" ><p class="text-15" >Jalan Binawidya, Kompleks<br/>Universitas Riau, Panam,<br/>Pekanbaru, Riau 28292</p></div></div>
+<div class="mini-map-placeholder" ><img class="image-2" src="img/image.png" /></div></div></div>
+<div class="copyright-bottom-bar" ><div class="container-14" ><div class="container-2" ><p class="text-16" >© 2026 Peta Pengimbasan Guru &amp; Siswa, Politeknik Caltex Riau.</p></div>
+<div class="container-15" ><div class="link-2" ><div class="text-16" >Kontak Kami</div></div>
+<div class="link-2" ><div class="text-16" >Kebijakan Privasi</div></div></div></div></div></footer></div></div>
+</body>
+</html>
