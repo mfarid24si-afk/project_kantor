@@ -12,6 +12,8 @@ import {
   SUPABASE_ANON_KEY,
   TABEL_GURU,
   TABEL_SISWA,
+  TABEL_KOMUNITAS,
+  TABEL_UMUM,
   KOLOM_KABUPATEN,
 } from './config.js';
 
@@ -49,9 +51,10 @@ export async function fetchJumlahGuruPerKabupaten() {
   return hitungPerKabupaten(await fetchKolom(TABEL_GURU, KOLOM_KABUPATEN));
 }
 
-/** Jumlah siswa per kabupaten — pola yang sama dengan guru (FR-3.4). */
+/** Jumlah siswa per kabupaten — tabel siswa tidak punya kolom kabupaten,
+ * jadi selalu mengembalikan objek kosong. */
 export async function fetchJumlahSiswaPerKabupaten() {
-  return hitungPerKabupaten(await fetchKolom(TABEL_SISWA, KOLOM_KABUPATEN));
+  return {};
 }
 
 /** Ambil baris data lengkap untuk sebuah kabupaten. */
@@ -80,6 +83,16 @@ async function postRows(tableName, payload) {
     throw new Error(`Supabase insert gagal: ${res.status} — ${detail.slice(0, 200)}`);
   }
   return true;
+}
+
+/** Ambil semua baris dari sebuah tabel tanpa filter kabupaten. */
+export async function fetchAllRows(tableName) {
+  const url = `${SUPABASE_URL}/rest/v1/${tableName}?select=*&order=created_at.desc`;
+  const res = await fetch(url, { headers: supabaseHeaders() });
+  if (!res.ok) {
+    throw new Error(`Supabase fetch gagal: ${res.status}`);
+  }
+  return res.json();
 }
 
 /** Kirim satu baris data ke tabel (POST) — dipakai Form. */

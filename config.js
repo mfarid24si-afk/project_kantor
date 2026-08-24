@@ -13,17 +13,26 @@ export const SUPABASE_URL = 'https://lvorvfhdrlagcpsimteo.supabase.co';
 export const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2b3J2ZmhkcmxhZ2Nwc2ltdGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzIwNTAsImV4cCI6MjEwMTkwODA1MH0.gM7BvTL1wNKVx6Oxozry_s8bazxTNtRbU7u0p7Lx3pA';
 
-// --- Tabel & kolom Supabase ---
+// --- Tabel & kolom Supabase (SKEMA ASLI, hasil verifikasi langsung) ---
 export const TABEL_GURU = 'guru';
 export const TABEL_SISWA = 'siswa';
-// Nama kolom kabupaten (sama di kedua tabel).
+export const TABEL_KOMUNITAS = 'komunitas';
+export const TABEL_UMUM = 'umum';
+
+// Nama kolom kabupaten — hanya tabel `guru` yang memiliki kolom ini.
 export const KOLOM_KABUPATEN = 'kabupaten';
+
+// Daftar 4 tabel utama untuk form & detail.
+export const SEMUA_TABEL = [
+  { key: 'guru', table: TABEL_GURU, label: 'Guru', hasKabupaten: true },
+  { key: 'siswa', table: TABEL_SISWA, label: 'Siswa', hasKabupaten: false },
+  { key: 'komunitas', table: TABEL_KOMUNITAS, label: 'Komunitas', hasKabupaten: false },
+  { key: 'umum', table: TABEL_UMUM, label: 'Umum', hasKabupaten: false },
+];
 
 // Kolom tabel `guru` — SKEMA ASLI di Supabase (hasil verifikasi langsung):
 // id, nama_guru, nuptk, asal_sekolah, kelurahan, kabupaten, provinsi,
-// nama_guru_utama, created_at. Form memakai daftar ini apa adanya.
-// Urutan di sini = urutan field pada Form. Catatan: `nuptk` dikirim sebagai
-// angka (kolomnya bertipe integer).
+// nama_guru_utama, created_at.
 export const KOLOM_GURU = [
   'nama_guru',
   'kabupaten',
@@ -34,9 +43,17 @@ export const KOLOM_GURU = [
   'nama_guru_utama',
 ];
 
-// Kolom tabel `siswa` (belum dibuat di Supabase — struktur mengikuti PRD).
-// Saat tabel siswa sudah dibuat, sesuaikan daftar ini dengan skema aslinya.
-export const KOLOM_SISWA = ['nama', 'sekolah', 'kabupaten', 'jenjang'];
+// Kolom tabel `siswa` — SKEMA ASLI di Supabase:
+// id, nama_siswa, sekolah, nis, alamat_sekolah, created_at.
+export const KOLOM_SISWA = ['nama_siswa', 'sekolah', 'nis', 'alamat_sekolah'];
+
+// Kolom tabel `komunitas` — SKEMA ASLI di Supabase:
+// id, nama_individu, nama_komunitas, alamat_afiliasi, created_at.
+export const KOLOM_KOMUNITAS = ['nama_individu', 'nama_komunitas', 'alamat_afiliasi'];
+
+// Kolom tabel `umum` — SKEMA ASLI di Supabase:
+// id, nama_umum, pekerjaan, alamat, created_at.
+export const KOLOM_UMUM = ['nama_umum', 'pekerjaan', 'alamat'];
 
 // --- GeoJSON batas wilayah (dipakai apa adanya, tidak digambar ulang) ---
 export const GEOJSON_PATH = 'Area_Kab_Riau.geojson';

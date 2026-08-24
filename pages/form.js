@@ -1,18 +1,19 @@
 /* =====================================================================
  * HALAMAN FORM — Input Data (FR-4)
- *  - Pilihan jenis data: Guru / Siswa
+ *  - Pilihan jenis data: Guru / Siswa / Komunitas / Umum
  *  - Field dibangun dinamis dari daftar kolom di config.js (FR-5.3),
  *    sehingga form selalu cocok dengan skema tabel di Supabase.
- *  - Dropdown kabupaten/kota diambil dari geojson (konsisten dengan peta)
- *  - Validasi dasar (field wajib + kabupaten harus dari daftar valid)
+ *  - Dropdown kabupaten/kota hanya untuk tabel guru (yang punya kolom kabupaten)
+ *  - Validasi dasar (field wajib + kabupaten harus dari daftar valid untuk guru)
  *  - POST ke Supabase memakai struktur API key yang sama (FR-5.2)
  *  - Notifikasi sukses + form ter-reset setelah submit (FR-4.6)
- *
- *  CATATAN: tabel `siswa` belum dibuat di Supabase (404 saat dibaca) —
- *  submit data siswa akan gagal sampai tabel tersebut tersedia.
  * ===================================================================== */
 
-import { TABEL_GURU, TABEL_SISWA, KOLOM_GURU, KOLOM_SISWA, KABUPATEN_LIST } from '../config.js';
+import {
+  TABEL_GURU, TABEL_SISWA, TABEL_KOMUNITAS, TABEL_UMUM,
+  KOLOM_GURU, KOLOM_SISWA, KOLOM_KOMUNITAS, KOLOM_UMUM,
+  KABUPATEN_LIST, SEMUA_TABEL,
+} from '../config.js';
 import { insertBaris, insertBanyakBaris } from '../api.js';
 import { getKabupatenList, escapeHtml, showToast } from '../ui.js';
 import { parseCsv, csvField } from '../csv.js';
@@ -22,11 +23,14 @@ import { footerHtml } from '../footer.js';
 // Kolom yang wajib diisi per jenis data.
 const REQUIRED = {
   guru: new Set(['nama_guru', 'kabupaten', 'asal_sekolah']),
-  siswa: new Set(['nama', 'kabupaten', 'sekolah']),
+  siswa: new Set(['nama_siswa', 'sekolah']),
+  komunitas: new Set(['nama_individu', 'nama_komunitas']),
+  umum: new Set(['nama_umum', 'pekerjaan']),
 };
 
 // Metadata tampilan & aturan per kolom (key = nama kolom di Supabase).
 const FIELD_META = {
+  // Guru
   nama_guru: { label: 'Nama Guru', placeholder: 'Nama lengkap guru', autocomplete: 'name' },
   nuptk: { label: 'NUPTK', placeholder: 'Nomor NUPTK (opsional)', inputType: 'number', numeric: true },
   asal_sekolah: { label: 'Asal Sekolah', placeholder: 'Nama sekolah / instansi', autocomplete: 'organization' },
@@ -34,14 +38,26 @@ const FIELD_META = {
   kabupaten: { label: 'Kabupaten / Kota', type: 'select' },
   provinsi: { label: 'Provinsi', placeholder: 'Provinsi (opsional, contoh: Riau)' },
   nama_guru_utama: { label: 'Nama Guru Utama', placeholder: 'Nama guru utama / penanggung jawab (opsional)' },
-  nama: { label: 'Nama', placeholder: 'Nama lengkap siswa', autocomplete: 'name' },
+  // Siswa
+  nama_siswa: { label: 'Nama Siswa', placeholder: 'Nama lengkap siswa', autocomplete: 'name' },
   sekolah: { label: 'Nama Sekolah', placeholder: 'Nama sekolah / instansi', autocomplete: 'organization' },
-  jenjang: { label: 'Jenjang / Kelas', placeholder: 'Contoh: SD, SMP, SMA, SMK, kelas 5' },
+  nis: { label: 'NIS', placeholder: 'Nomor Induk Siswa (opsional)', inputType: 'number', numeric: true },
+  alamat_sekolah: { label: 'Alamat Sekolah', placeholder: 'Alamat sekolah (opsional)' },
+  // Komunitas
+  nama_individu: { label: 'Nama Individu', placeholder: 'Nama lengkap individu', autocomplete: 'name' },
+  nama_komunitas: { label: 'Nama Komunitas', placeholder: 'Nama komunitas / organisasi' },
+  alamat_afiliasi: { label: 'Alamat Afiliasi', placeholder: 'Alamat afiliasi (opsional)' },
+  // Umum
+  nama_umum: { label: 'Nama', placeholder: 'Nama lengkap', autocomplete: 'name' },
+  pekerjaan: { label: 'Pekerjaan', placeholder: 'Pekerjaan / profesi' },
+  alamat: { label: 'Alamat', placeholder: 'Alamat lengkap (opsional)' },
 };
 
 const JENIS = {
-  guru: { table: TABEL_GURU, label: 'guru', columns: KOLOM_GURU },
-  siswa: { table: TABEL_SISWA, label: 'siswa', columns: KOLOM_SISWA },
+  guru: { table: TABEL_GURU, label: 'guru', columns: KOLOM_GURU, hasKabupaten: true },
+  siswa: { table: TABEL_SISWA, label: 'siswa', columns: KOLOM_SISWA, hasKabupaten: false },
+  komunitas: { table: TABEL_KOMUNITAS, label: 'komunitas', columns: KOLOM_KOMUNITAS, hasKabupaten: false },
+  umum: { table: TABEL_UMUM, label: 'umum', columns: KOLOM_UMUM, hasKabupaten: false },
 };
 
 // Upload CSV: jumlah baris maksimal per request (batch).
@@ -56,9 +72,16 @@ const HEADER_ALIASES = {
   kabupaten: ['kabupaten', 'kabupaten kota', 'kab', 'kota'],
   provinsi: ['provinsi'],
   nama_guru_utama: ['nama_guru_utama', 'guru utama', 'penanggung jawab'],
-  nama: ['nama', 'nama siswa', 'siswa'],
+  nama_siswa: ['nama_siswa', 'nama siswa', 'siswa', 'nama'],
   sekolah: ['sekolah', 'nama sekolah'],
-  jenjang: ['jenjang', 'kelas', 'jenjang kelas'],
+  nis: ['nis', 'nomor induk siswa', 'nomor induk'],
+  alamat_sekolah: ['alamat_sekolah', 'alamat sekolah'],
+  nama_individu: ['nama_individu', 'nama individu', 'individu', 'nama'],
+  nama_komunitas: ['nama_komunitas', 'nama komunitas', 'komunitas'],
+  alamat_afiliasi: ['alamat_afiliasi', 'alamat afiliasi', 'afiliasi'],
+  nama_umum: ['nama_umum', 'nama umum', 'nama'],
+  pekerjaan: ['pekerjaan', 'profesi', 'job'],
+  alamat: ['alamat'],
 };
 
 let kabupatenValid = [];
@@ -72,13 +95,14 @@ export function renderForm(container) {
       <div class="form-card">
         <h2>Input Data</h2>
         <p class="form-desc">
-          Simpan data guru atau siswa ke peta. Data baru akan tampil di peta
-          secara otomatis dalam beberapa detik tanpa reload manual.
+          Simpan data ke database. Pilih jenis data yang ingin dimasukkan.
         </p>
 
         <div class="segmented" role="tablist" aria-label="Jenis data">
           <button type="button" class="segmented-btn active" data-jenis="guru" role="tab" aria-selected="true">Guru</button>
           <button type="button" class="segmented-btn" data-jenis="siswa" role="tab" aria-selected="false">Siswa</button>
+          <button type="button" class="segmented-btn" data-jenis="komunitas" role="tab" aria-selected="false">Komunitas</button>
+          <button type="button" class="segmented-btn" data-jenis="umum" role="tab" aria-selected="false">Umum</button>
         </div>
 
         <form id="data-form" novalidate>
@@ -86,7 +110,7 @@ export function renderForm(container) {
           <button type="submit" class="btn btn-primary form-submit" id="btn-submit">Simpan Data</button>
           <p class="form-note">
             Data yang diisi akan tercatat pada tabel
-            <b id="note-table">guru</b> di Supabase dan langsung terhitung di peta.
+            <b id="note-table">guru</b> di Supabase.
           </p>
         </form>
       </div>
@@ -149,7 +173,7 @@ export function renderForm(container) {
     });
   }
 
-  /* ------- Render field sesuai jenis (Guru / Siswa) ------- */
+  /* ------- Render field sesuai jenis ------- */
   function fieldHtml(key) {
     const meta = FIELD_META[key] || {};
     const required = REQUIRED[jenisAktif].has(key);
@@ -174,7 +198,6 @@ export function renderForm(container) {
       `;
     }
 
-    // maxlength tidak berlaku untuk input angka, jadi hanya untuk type text.
     const maxlength = inputType === 'number' ? '' : ' maxlength="120"';
     return `
       <div class="form-field" data-field="${key}">
@@ -188,7 +211,6 @@ export function renderForm(container) {
 
   function renderFields(jenis) {
     fieldsContainer.innerHTML = JENIS[jenis].columns.map(fieldHtml).join('');
-    // Hapus status error lama & pasang pembersih error saat diketik.
     form.querySelectorAll('input, select').forEach((input) => {
       const handler = () => input.closest('.form-field')?.classList.remove('invalid');
       input.addEventListener('input', handler);
@@ -197,7 +219,7 @@ export function renderForm(container) {
     fillKabupatenOptions();
   }
 
-  /* ------- Pilihan jenis data: Guru / Siswa (FR-4.1) ------- */
+  /* ------- Pilihan jenis data ------- */
   function setJenis(jenis) {
     jenisAktif = jenis;
     document.querySelectorAll('.segmented-btn').forEach((b) => {
@@ -214,7 +236,7 @@ export function renderForm(container) {
     b.addEventListener('click', () => setJenis(b.dataset.jenis));
   });
 
-  /* ------- Validasi dasar (FR-4.3) ------- */
+  /* ------- Validasi dasar ------- */
   function validateForm() {
     let valid = true;
     for (const key of JENIS[jenisAktif].columns) {
@@ -249,7 +271,7 @@ export function renderForm(container) {
     return valid;
   }
 
-  /* ------- Submit: POST ke Supabase (FR-4.4) ------- */
+  /* ------- Submit: POST ke Supabase ------- */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -260,7 +282,6 @@ export function renderForm(container) {
     }
 
     const jenis = JENIS[jenisAktif];
-    // Hanya kolom yang diisi yang dikirim; NUPTK dikonversi ke angka.
     const payload = {};
     for (const key of jenis.columns) {
       const input = form.querySelector(`[data-field="${key}"] input, [data-field="${key}"] select`);
@@ -274,9 +295,7 @@ export function renderForm(container) {
     btnSubmit.textContent = 'Menyimpan…';
     try {
       await insertBaris(jenis.table, payload);
-      showToast(`Data ${jenis.label} berhasil disimpan ke peta ✓`);
-      // Reset isian, tetapi PERTAHANKAN jenis data yang sedang dipilih
-      // (jangan paksa kembali ke "Guru").
+      showToast(`Data ${jenis.label} berhasil disimpan ✓`);
       form.reset();
       renderFields(jenisAktif);
       inputNamaFokus();
@@ -319,14 +338,8 @@ export function renderForm(container) {
   function updateUploadTarget() {
     const jenis = JENIS[jenisAktif];
     uploadTarget.textContent = jenis.label;
-    if (jenisAktif === 'siswa') {
-      uploadNote.innerHTML =
-        'Upload CSV untuk siswa belum aktif — tabel <b>siswa</b> belum tersedia di database. Pilih tab <b>Guru</b> untuk mengunggah.';
-      setUploadEnabled(false);
-    } else {
-      uploadNote.innerHTML = 'Target tabel: <b>guru</b> · dikirim per batch 500 baris.';
-      setUploadEnabled(true);
-    }
+    uploadNote.innerHTML = `Target tabel: <b>${escapeHtml(jenis.label)}</b> · dikirim per batch 500 baris.`;
+    setUploadEnabled(true);
   }
 
   function normalizeHeader(h) {
@@ -364,7 +377,6 @@ export function renderForm(container) {
       };
     }
 
-    // Petakan header CSV → kolom tabel; tandai kolom wajib yang hilang.
     const mapping = {};
     const missing = [];
     for (const col of jenisDef.columns) {
@@ -378,7 +390,7 @@ export function renderForm(container) {
 
     const validRows = [];
     data.forEach((obj, idx) => {
-      const lineNo = idx + 2; // baris 1 = header
+      const lineNo = idx + 2;
       let okRow = true;
       const row = {};
       for (const col of jenisDef.columns) {
@@ -514,23 +526,17 @@ export function renderForm(container) {
     readFiles(e.dataTransfer.files);
   });
 
-  // Unduh template CSV sesuai tab aktif (Guru / Siswa).
+  // Unduh template CSV sesuai tab aktif.
   btnTemplate.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     const jenis = JENIS[jenisAktif];
-    const sample =
-      jenisAktif === 'guru'
-        ? {
-            nama_guru: 'Contoh Nama Guru',
-            kabupaten: 'Pekanbaru',
-            asal_sekolah: 'Contoh Sekolah',
-            nuptk: '1234567890',
-            kelurahan: 'Contoh Kelurahan',
-            provinsi: 'Riau',
-            nama_guru_utama: '',
-          }
-        : { nama: 'Contoh Nama Siswa', kabupaten: 'Pekanbaru', sekolah: 'Contoh Sekolah', jenjang: 'SD' };
+    const sample = {};
+    for (const col of jenis.columns) {
+      const meta = FIELD_META[col] || {};
+      if (col === 'kabupaten') sample[col] = 'Pekanbaru';
+      else sample[col] = `Contoh ${meta.label || col}`;
+    }
     const csv =
       '\uFEFF' +
       [jenis.columns.join(','), jenis.columns.map((c) => csvField(sample[c] ?? '')).join(',')].join('\n');
@@ -545,12 +551,8 @@ export function renderForm(container) {
     URL.revokeObjectURL(url);
   });
 
-  // Kirim batch demi batch; satu request gagal → file ditandai gagal, lanjut file lain.
+  // Kirim batch demi batch.
   btnUpload.addEventListener('click', async () => {
-    if (jenisAktif === 'siswa') {
-      showToast('Upload siswa belum aktif — tabel siswa belum tersedia di database.', 'error');
-      return;
-    }
     const jenis = JENIS[jenisAktif];
     const files = uploadFiles.filter((f) => f.validRows.length > 0);
     if (files.length === 0) {

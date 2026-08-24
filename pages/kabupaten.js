@@ -1,13 +1,17 @@
 /* =====================================================================
- * HALAMAN DETAIL KABUPATEN — tabel Guru & Siswa
- *  - Tabel interaktif per jenis data (guru / siswa)
- *  - Pencarian (search) mencakup semua kolom
- *  - Filter per kolom + nilai (dropdown generik sesuai skema tabel)
- *  - Paginasi 10 baris per halaman
+ * HALAMAN DETAIL KABUPATEN — 4 tabel dengan tabbed navbar
+ *  - Tabbed navbar untuk switch antar tabel (Guru, Siswa, Komunitas, Umum)
+ *  - Guru: data difilter per kabupaten
+ *  - Siswa, Komunitas, Umum: semua data (tidak punya kolom kabupaten)
+ *  - Pencarian, filter, paginasi untuk setiap tabel
  * ===================================================================== */
 
-import { KABUPATEN_LIST, KOLOM_GURU, KOLOM_SISWA, TABEL_GURU, TABEL_SISWA } from '../config.js';
-import { fetchRowsByKabupaten } from '../api.js';
+import {
+  KABUPATEN_LIST,
+  KOLOM_GURU, KOLOM_SISWA, KOLOM_KOMUNITAS, KOLOM_UMUM,
+  TABEL_GURU, TABEL_SISWA, TABEL_KOMUNITAS, TABEL_UMUM,
+} from '../config.js';
+import { fetchRowsByKabupaten, fetchAllRows } from '../api.js';
 import { escapeHtml, showToast } from '../ui.js';
 import { csvField } from '../csv.js';
 import { footerHtml } from '../footer.js';
@@ -15,6 +19,14 @@ import { icon } from '../icons.js';
 
 /** Jumlah baris per halaman untuk semua tabel detail. */
 const PER_PAGE = 10;
+
+/** Konfigurasi 4 tabel. */
+const TABLES = [
+  { key: 'guru', label: 'Guru', table: TABEL_GURU, columns: KOLOM_GURU, hasKabupaten: true },
+  { key: 'siswa', label: 'Siswa', table: TABEL_SISWA, columns: KOLOM_SISWA, hasKabupaten: false },
+  { key: 'komunitas', label: 'Komunitas', table: TABEL_KOMUNITAS, columns: KOLOM_KOMUNITAS, hasKabupaten: false },
+  { key: 'umum', label: 'Umum', table: TABEL_UMUM, columns: KOLOM_UMUM, hasKabupaten: false },
+];
 
 function renderRowValue(value) {
   if (value === null || value === undefined || value === '') return '—';
@@ -24,7 +36,6 @@ function renderRowValue(value) {
 function labelColumn(col) {
   return col.replace(/_/g, ' ');
 }
-
 
 /** Daftar halaman yang ditampilkan: [1, '…', 4, 5, 6, '…', 12]. */
 function pageWindow(current, total) {
@@ -42,10 +53,9 @@ function pageWindow(current, total) {
 /**
  * Pasang komponen tabel interaktif ke dalam `root`:
  * toolbar pencarian + filter kolom/nilai + tabel + paginasi.
- * Tiga kondisi tanpa tabel ditangani dengan kartu status:
- * error, data tidak tersedia, dan daftar kosong.
  */
-function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug = label.toLowerCase().replace(/\s+/g, '-') }) {
+function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug }) {
+  if (!fileSlug) fileSlug = label.toLowerCase().replace(/\s+/g, '-');
   if (error) {
     root.innerHTML = `<div class="status-card status-card--warn">${escapeHtml(error)}</div>`;
     return;
@@ -104,7 +114,6 @@ function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug
   const resetBtn = root.querySelector('.dt-reset');
   const bodyEl = root.querySelector('.dt-body');
 
-  /** Baris yang lolos pencarian + filter saat ini. */
   function filteredRows() {
     const q = search.trim().toLowerCase();
     return rows.filter((row) => {
@@ -114,7 +123,6 @@ function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug
     });
   }
 
-  /** Nilai unik (urut alfabet) untuk sebuah kolom — sumber dropdown filter. */
   function distinctValues(col) {
     const seen = new Set();
     for (const row of rows) {
@@ -124,7 +132,6 @@ function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug
     return [...seen].sort((a, b) => a.localeCompare(b, 'id'));
   }
 
-  /** Isi ulang dropdown nilai sesuai kolom yang dipilih. */
   function refreshValueOptions() {
     valueSelect.disabled = !filterColumn;
     valueSelect.innerHTML =
@@ -229,7 +236,7 @@ function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug
 
   resetBtn.addEventListener('click', resetAll);
 
-  // Ekspor CSV — mengunduh baris sesuai pencarian/filter saat ini (BOM utk Excel).
+  // Ekspor CSV
   const exportBtn = root.querySelector('.dt-export');
   exportBtn.addEventListener('click', () => {
     const list = filteredRows();
@@ -255,7 +262,7 @@ function mountDataTable(root, { columns, rows, label, emptyText, error, fileSlug
     showToast(`Berhasil mengunduh ${list.length.toLocaleString('id-ID')} baris (CSV).`);
   });
 
-  // Delegasi klik tombol halaman (konten tabel di-render ulang tiap kali).
+  // Delegasi klik tombol halaman
   root.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-page]');
     if (!btn) return;
@@ -283,7 +290,7 @@ export async function renderKabupaten(container, params) {
         <h1>Detail ${escapeHtml(kabupaten || 'Kabupaten')}</h1>
         <p class="kabupaten-lead">
           ${validKabupaten
-            ? 'Menampilkan tabel Guru dan Siswa secara terpisah per kabupaten. Gunakan pencarian, filter, dan paginasi untuk menjelajah data.'
+            ? 'Pilih tab di bawah untuk melihat data Guru, Siswa, Komunitas, atau Umum. Gunakan pencarian, filter, dan paginasi untuk menjelajah data.'
             : 'Kabupaten tidak valid atau belum didukung. Pilih wilayah pada peta untuk melihat detail yang tersedia.'}
         </p>
         <div class="hero-actions">
@@ -292,9 +299,27 @@ export async function renderKabupaten(container, params) {
         </div>
       </section>
 
+      ${validKabupaten ? `
+      <!-- TABBED NAVBAR untuk switch tabel -->
+      <nav class="detail-tabs" aria-label="Navigasi tabel detail">
+        <button type="button" class="detail-tab active" data-tab="guru" aria-selected="true">
+          ${icon('user')} Guru
+        </button>
+        <button type="button" class="detail-tab" data-tab="siswa" aria-selected="false">
+          ${icon('graduation')} Siswa
+        </button>
+        <button type="button" class="detail-tab" data-tab="komunitas" aria-selected="false">
+          ${icon('users')} Komunitas
+        </button>
+        <button type="button" class="detail-tab" data-tab="umum" aria-selected="false">
+          ${icon('building')} Umum
+        </button>
+      </nav>
+      ` : ''}
+
       <section class="section-block">
         <div id="kabupaten-content">
-          <div class="status-card">Memuat data kabupaten…</div>
+          <div class="status-card">${validKabupaten ? 'Memuat data kabupaten…' : 'Kabupaten tidak valid.'}</div>
         </div>
       </section>
     </div>
@@ -311,57 +336,23 @@ export async function renderKabupaten(container, params) {
     return;
   }
 
+  // Load semua data sekaligus
+  const allData = {};
+
   try {
-    const [guruRes, siswaRes] = await Promise.allSettled([
-      fetchRowsByKabupaten(TABEL_GURU, kabupaten),
-      fetchRowsByKabupaten(TABEL_SISWA, kabupaten),
+    const results = await Promise.allSettled([
+      fetchRowsByKabupaten(TABEL_GURU, kabupaten),     // guru: filter by kabupaten
+      fetchAllRows(TABEL_SISWA),                        // siswa: semua data
+      fetchAllRows(TABEL_KOMUNITAS),                    // komunitas: semua data
+      fetchAllRows(TABEL_UMUM),                         // umum: semua data
     ]);
 
-    const guruRows = guruRes.status === 'fulfilled' ? guruRes.value : null;
-    const siswaRows = siswaRes.status === 'fulfilled' ? siswaRes.value : null;
-
-    const totalGuru = Array.isArray(guruRows) ? guruRows.length : 0;
-    const totalSiswa = Array.isArray(siswaRows) ? siswaRows.length : 0;
-
-    contentEl.innerHTML = `
-      <div class="kabupaten-summary">
-        <div class="mini-stat">
-          <b>${totalGuru}</b>
-          <span>Guru</span>
-        </div>
-        <div class="mini-stat">
-          <b>${totalSiswa}</b>
-          <span>Siswa</span>
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <h2>Data Guru di ${escapeHtml(kabupaten)}</h2>
-        <div class="dt-root" id="dt-root-guru"></div>
-      </div>
-
-      <div class="detail-section">
-        <h2>Data Siswa di ${escapeHtml(kabupaten)}</h2>
-        <div class="dt-root" id="dt-root-siswa"></div>
-      </div>
-    `;
-
-    mountDataTable(document.getElementById('dt-root-guru'), {
-      columns: KOLOM_GURU,
-      rows: guruRows,
-      label: 'Tabel Guru',
-      fileSlug: `guru-${kabupaten.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-      emptyText: `Tidak ada data guru untuk ${kabupaten}.`,
-      error: guruRes.status === 'rejected' ? `Gagal memuat data guru: ${escapeHtml(guruRes.reason?.message || 'Terjadi kesalahan')}` : null,
-    });
-
-    mountDataTable(document.getElementById('dt-root-siswa'), {
-      columns: KOLOM_SISWA,
-      rows: siswaRows,
-      label: 'Tabel Siswa',
-      fileSlug: `siswa-${kabupaten.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-      emptyText: `Tidak ada data siswa untuk ${kabupaten}.`,
-      error: siswaRes.status === 'rejected' ? `Gagal memuat data siswa: ${escapeHtml(siswaRes.reason?.message || 'Terjadi kesalahan')}` : null,
+    const labels = ['Guru', 'Siswa', 'Komunitas', 'Umum'];
+    results.forEach((res, i) => {
+      allData[TABLES[i].key] = {
+        rows: res.status === 'fulfilled' ? res.value : null,
+        error: res.status === 'rejected' ? res.reason?.message || 'Gagal memuat data' : null,
+      };
     });
   } catch (err) {
     contentEl.innerHTML = `
@@ -369,5 +360,92 @@ export async function renderKabupaten(container, params) {
         Terjadi kesalahan saat memuat data: ${escapeHtml(err.message || 'Tidak diketahui')}.
       </div>
     `;
+    return;
   }
+
+  // Render summary
+  function renderSummary() {
+    const guruCount = allData.guru.rows ? allData.guru.rows.length : 0;
+    const siswaCount = allData.siswa.rows ? allData.siswa.rows.length : 0;
+    const komunitasCount = allData.komunitas.rows ? allData.komunitas.rows.length : 0;
+    const umumCount = allData.umum.rows ? allData.umum.rows.length : 0;
+
+    return `
+      <div class="kabupaten-summary">
+        <div class="mini-stat">
+          <b>${guruCount}</b>
+          <span>Guru</span>
+        </div>
+        <div class="mini-stat">
+          <b>${siswaCount}</b>
+          <span>Siswa</span>
+        </div>
+        <div class="mini-stat">
+          <b>${komunitasCount}</b>
+          <span>Komunitas</span>
+        </div>
+        <div class="mini-stat">
+          <b>${umumCount}</b>
+          <span>Umum</span>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render tabel berdasarkan tab aktif
+  function renderTabContent(tabKey) {
+    const tbl = TABLES.find((t) => t.key === tabKey);
+    if (!tbl) return;
+
+    const data = allData[tabKey];
+    const slug = `${tabKey}-${kabupaten.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
+    let description = '';
+    if (tbl.hasKabupaten) {
+      description = `Data ${tbl.label.toLowerCase()} di ${kabupaten}.`;
+    } else {
+      description = `Semua data ${tbl.label.toLowerCase()} (tidak difilter per kabupaten).`;
+    }
+
+    contentEl.innerHTML = `
+      ${renderSummary()}
+      <div class="detail-section">
+        <h2>Data ${tbl.label} ${tbl.hasKabupaten ? `di ${escapeHtml(kabupaten)}` : ''}</h2>
+        <p class="detail-section-desc">${escapeHtml(description)}</p>
+        <div class="dt-root" id="dt-root-active"></div>
+      </div>
+    `;
+
+    mountDataTable(document.getElementById('dt-root-active'), {
+      columns: tbl.columns,
+      rows: data?.rows,
+      label: `Tabel ${tbl.label}`,
+      fileSlug: slug,
+      emptyText: tbl.hasKabupaten
+        ? `Tidak ada data ${tbl.label.toLowerCase()} untuk ${kabupaten}.`
+        : `Tidak ada data ${tbl.label.toLowerCase()}.`,
+      error: data?.error ? `Gagal memuat data ${tbl.label.toLowerCase()}: ${escapeHtml(data.error)}` : null,
+    });
+  }
+
+  // Setup tab switching
+  let activeTab = 'guru';
+  const tabs = document.querySelectorAll('.detail-tab');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const tabKey = tab.dataset.tab;
+      if (tabKey === activeTab) return;
+      activeTab = tabKey;
+      tabs.forEach((t) => {
+        const isActive = t.dataset.tab === tabKey;
+        t.classList.toggle('active', isActive);
+        t.setAttribute('aria-selected', String(isActive));
+      });
+      renderTabContent(tabKey);
+    });
+  });
+
+  // Render default tab (Guru)
+  renderTabContent('guru');
 }

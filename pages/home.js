@@ -1,7 +1,7 @@
-import { KABUPATEN_LIST } from "../config.js";
+import { KABUPATEN_LIST, TABEL_SISWA, TABEL_KOMUNITAS, TABEL_UMUM } from "../config.js";
 import {
   fetchJumlahGuruPerKabupaten,
-  fetchJumlahSiswaPerKabupaten,
+  fetchAllRows,
 } from "../api.js";
 import { getKabupatenList } from "../ui.js";
 import { icon } from "../icons.js";
@@ -710,36 +710,22 @@ async function loadHomeData(root) {
   const [
     guruRes,
     siswaRes,
+    komunitasRes,
+    umumRes,
     kabRes,
   ] = await Promise.allSettled([
 
     fetchJumlahGuruPerKabupaten(),
 
-    fetchJumlahSiswaPerKabupaten(),
+    fetchAllRows(TABEL_SISWA),
+
+    fetchAllRows(TABEL_KOMUNITAS),
+
+    fetchAllRows(TABEL_UMUM),
 
     getKabupatenList(),
 
   ]);
-
-
-  if (guruRes.status === "rejected") {
-
-    console.warn(
-      "Gagal memuat statistik guru:",
-      guruRes.reason,
-    );
-
-  }
-
-
-  if (siswaRes.status === "rejected") {
-
-    console.warn(
-      "Gagal memuat statistik siswa:",
-      siswaRes.reason,
-    );
-
-  }
 
 
   const homeData = {
@@ -749,10 +735,20 @@ async function loadHomeData(root) {
         ? guruRes.value
         : {},
 
-    siswa:
+    totalSiswa:
       siswaRes.status === "fulfilled"
-        ? siswaRes.value
-        : {},
+        ? siswaRes.value.length
+        : 0,
+
+    totalKomunitas:
+      komunitasRes.status === "fulfilled"
+        ? komunitasRes.value.length
+        : 0,
+
+    totalUmum:
+      umumRes.status === "fulfilled"
+        ? umumRes.value.length
+        : 0,
 
     kab:
       kabRes.status === "fulfilled"
@@ -762,8 +758,8 @@ async function loadHomeData(root) {
     guruOk:
       guruRes.status === "fulfilled",
 
-    siswaOk:
-      siswaRes.status === "fulfilled",
+    allOk:
+      [guruRes, siswaRes, komunitasRes, umumRes].every(r => r.status === "fulfilled"),
 
   };
 
@@ -801,22 +797,14 @@ function renderStats(root, data) {
 
   const {
     guru,
-    siswa,
+    totalSiswa,
     kab,
     guruOk,
-    siswaOk,
   } = data;
 
 
   const totalGuru =
     Object.values(guru).reduce(
-      (a, b) => a + b,
-      0,
-    );
-
-
-  const totalSiswa =
-    Object.values(siswa).reduce(
       (a, b) => a + b,
       0,
     );
@@ -842,18 +830,10 @@ function renderStats(root, data) {
   }
 
 
-  if (siswaOk) {
-
-    animateNumber(
-      statSiswa,
-      totalSiswa,
-    );
-
-  } else {
-
-    statSiswa.textContent = "—";
-
-  }
+  animateNumber(
+    statSiswa,
+    totalSiswa,
+  );
 }
 
 
@@ -888,35 +868,13 @@ function renderSplitCompare(root, data) {
 
   const {
     guru,
-    siswa,
+    totalSiswa,
     guruOk,
-    siswaOk,
   } = data;
-
-
-  if (!guruOk || !siswaOk) {
-
-    pctGuru.textContent = "—";
-
-    pctSiswa.textContent = "—";
-
-    fillGuru.style.width = "50%";
-
-    fillSiswa.style.width = "50%";
-
-    return;
-  }
 
 
   const totalGuru =
     Object.values(guru).reduce(
-      (a, b) => a + b,
-      0,
-    );
-
-
-  const totalSiswa =
-    Object.values(siswa).reduce(
       (a, b) => a + b,
       0,
     );
