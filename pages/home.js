@@ -6,6 +6,7 @@ import {
 import { getKabupatenList } from "../ui.js";
 import { icon } from "../icons.js";
 import { footerHtml } from "../footer.js";
+import { pageReady } from "../pageReadyManager.js";
 
 /* ==========================================
    DATA
@@ -767,6 +768,8 @@ async function loadHomeData(root) {
   renderStats(root, homeData);
 
   renderSplitCompare(root, homeData);
+
+  pageReady();
 }
 
 

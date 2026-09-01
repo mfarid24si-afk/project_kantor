@@ -16,6 +16,7 @@ import { escapeHtml, showToast } from '../ui.js';
 import { csvField } from '../csv.js';
 import { footerHtml } from '../footer.js';
 import { icon } from '../icons.js';
+import { pageReady } from '../pageReadyManager.js';
 
 /** Jumlah baris per halaman untuk semua tabel detail. */
 const PER_PAGE = 10;
@@ -333,6 +334,7 @@ export async function renderKabupaten(container, params) {
         Nama kabupaten tidak dikenali.
       </div>
     `;
+    pageReady();
     return;
   }
 
@@ -360,6 +362,7 @@ export async function renderKabupaten(container, params) {
         Terjadi kesalahan saat memuat data: ${escapeHtml(err.message || 'Tidak diketahui')}.
       </div>
     `;
+    pageReady();
     return;
   }
 
@@ -448,4 +451,6 @@ export async function renderKabupaten(container, params) {
 
   // Render default tab (Guru)
   renderTabContent('guru');
+
+  pageReady();
 }

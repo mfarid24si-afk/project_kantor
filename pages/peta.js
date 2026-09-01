@@ -32,6 +32,7 @@ import {
 import { escapeHtml } from '../ui.js';
 import { footerHtml } from '../footer.js';
 import { getColorForKabupaten } from '../colors.js';
+import { pageReady } from '../pageReadyManager.js';
 
 // Warna poligon untuk wilayah yang belum punya data sama sekali.
 const NO_DATA_COLOR = 'rgba(178, 184, 190, 0.55)';
@@ -389,7 +390,7 @@ export function renderPeta(container) {
   }
 
   // Polling otomatis — pola setInterval yang sudah ada (FR-3.5).
-  refreshData();
+  refreshData().then(() => pageReady());
   const interval = setInterval(refreshData, REFRESH_INTERVAL);
 
   // Segarkan data begitu tab kembali aktif (tanpa menunggu siklus polling).

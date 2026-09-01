@@ -1,5 +1,6 @@
 import { icon } from "../icons.js";
 import { footerHtml } from "../footer.js";
+import { pageReady } from "../pageReadyManager.js";
 
 /*
  * Sesuaikan path gambar dengan folder asset project kamu.
@@ -67,6 +68,10 @@ export function renderTantang(container) {
                 <img
                   src="${ABOUT_IMAGES.pcr}"
                   alt="Politeknik Caltex Riau"
+                  width="600"
+                  height="400"
+                  loading="eager"
+                  decoding="async"
                 />
 
                 <span class="image-label">
@@ -78,6 +83,10 @@ export function renderTantang(container) {
                 <img
                   src="${ABOUT_IMAGES.bbpr}"
                   alt="Balai Bahasa Provinsi Riau"
+                  width="600"
+                  height="400"
+                  loading="eager"
+                  decoding="async"
                 />
 
                 <span class="image-label">
@@ -179,6 +188,10 @@ export function renderTantang(container) {
                 <img
                   src="${ABOUT_IMAGES.logoPcr}"
                   alt="Logo Politeknik Caltex Riau"
+                  width="120"
+                  height="44"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 
@@ -188,6 +201,10 @@ export function renderTantang(container) {
                 <img
                   src="${ABOUT_IMAGES.logoBbpr}"
                   alt="Logo Balai Bahasa Provinsi Riau"
+                  width="260"
+                  height="44"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 
@@ -206,6 +223,7 @@ export function renderTantang(container) {
   `;
 
   observeReveals(container);
+  pageReady();
 }
 
 /* ==========================================

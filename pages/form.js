@@ -19,6 +19,7 @@ import { getKabupatenList, escapeHtml, showToast } from '../ui.js';
 import { parseCsv, csvField } from '../csv.js';
 import { icon } from '../icons.js';
 import { footerHtml } from '../footer.js';
+import { pageReady } from '../pageReadyManager.js';
 
 // Kolom yang wajib diisi per jenis data.
 const REQUIRED = {
@@ -159,6 +160,7 @@ export function renderForm(container) {
   getKabupatenList().then((names) => {
     kabupatenValid = names;
     fillKabupatenOptions();
+    pageReady();
   });
 
   function fillKabupatenOptions() {

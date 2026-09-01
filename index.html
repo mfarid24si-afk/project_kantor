@@ -10,6 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700;7..72,800&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700;7..72,800&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" />
     <title>Peta Sebaran Guru & Siswa — Provinsi Riau</title>
   </head>
 
@@ -19,8 +21,10 @@
     <nav class="navbar" aria-label="Navigasi utama">
       <a class="navbar-brand" href="/" data-route="/" aria-label="Beranda — Peta Guru dan Siswa Riau">
         <img
-          src="https://kamusbahasariau.kemendikdasmen.go.id/assets/bbpr3.png"
+          src="assets/images/logo-bbpr.png"
           alt="Logo Provinsi Riau"
+          width="140"
+          height="38"
         />
       </a>
 
@@ -47,19 +51,12 @@
 
     <main id="app"></main>
 
+    <div id="page-loader" class="page-loader" role="status" aria-label="Memuat halaman" aria-live="polite" style="display:none">
+      <div class="page-loader__spinner"></div>
+    </div>
+
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script type="module" src="/main.js"></script>
   </body>
 </html>
-
-<!-- Rian	23432526	SD 002    Pekanbaru Tampan	                  Pekanbaru	                Riau	Bang Rian
-Budi	23432527	SD 005    Dumai Barat	                        Dumai	                    Riau	Bang Budi
-Dedi	23432528	SD 012    Bengkalis	Mandau	                  Bengkalis	                Riau	Bang Dedi
-Andi	23432529	SD 003    Tembilahan	Tembilahan              Hulu	Indragiri Hilir	    Riau	Bang Andi
-Fajar	23432530	SD 008    Rengat	Rengat Barat	              Indragiri Hulu	          Riau	Bang Fajar
-Irfan	23432531	SD 015    Pangkalan Kerinci	Langgam	          Pelalawan	                Riau	Bang Irfan
-Surya	23432532	SD 004    Bangkinang	Salo	                  Kampar	                  Riau	Bang Surya
-Hend	23432533	SD 007    Pasir Pengaraian	Rambah	          Rokan Hulu	              Riau	Bang Hendra
-Aris	23432534	SD 011    Bagansiapiapi	Bangko	              Rokan Hilir	              Riau	Bang Aris
-Yudi	23432535	SD 009    Teluk Kuantan	Kuantan Tengah	      Kuantan Singingi	        Riau	Bang Yudi -->

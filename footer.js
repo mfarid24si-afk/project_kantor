@@ -44,8 +44,11 @@ export function footerHtml() {
             <iframe
               title="Lokasi Balai Bahasa Riau"
               src="https://www.google.com/maps?q=Balai+Bahasa+Riau&output=embed"
+              width="100%"
+              height="150"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
+              style="border:0"
             ></iframe>
           </div>
         </div>
