@@ -92,18 +92,24 @@ class ApiController extends Controller
             return response()->json(['error' => 'Tabel tidak ditemukan'], 404);
         }
 
-        $rows = $request->json()->all();
-        if (! is_array($rows)) {
-            return response()->json(['error' => 'Payload harus berupa array'], 400);
+        $rows = json_decode($request->getContent(), true);
+        if (! is_array($rows) || empty($rows) || ! array_is_list($rows)) {
+            return response()->json(['error' => 'Payload harus berupa array dan tidak boleh kosong'], 400);
         }
 
         $now = now();
         $records = [];
+        $fillable = (new $modelClass)->getFillable();
+        $allowedKeys = array_flip($fillable);
+
         foreach ($rows as $row) {
             if (is_array($row) && ! empty($row)) {
-                $row['created_at'] = $now;
-                $row['updated_at'] = $now;
-                $records[] = $row;
+                $filtered = array_intersect_key($row, $allowedKeys);
+                if (! empty($filtered)) {
+                    $filtered['created_at'] = $now;
+                    $filtered['updated_at'] = $now;
+                    $records[] = $filtered;
+                }
             }
         }
 

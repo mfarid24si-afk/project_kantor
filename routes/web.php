@@ -33,3 +33,17 @@ Route::prefix('api')->group(function () {
     Route::post('/data/{table}', [ApiController::class, 'insertRow'])->name('api.table.insert');
     Route::post('/data/{table}/batch', [ApiController::class, 'insertBatch'])->name('api.table.batch');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Static GeoJSON Route
+|--------------------------------------------------------------------------
+*/
+Route::get('/geojson/{file}', function (string $file) {
+    $path = public_path("geojson/{$file}");
+    abort_unless(file_exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/geo+json',
+    ]);
+})->name('geojson.show');
