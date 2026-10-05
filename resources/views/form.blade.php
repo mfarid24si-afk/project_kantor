@@ -22,7 +22,7 @@
       <button type="submit" class="btn btn-primary form-submit" id="btn-submit">Simpan Data</button>
       <p class="form-note">
         Data yang diisi akan tercatat pada tabel
-        <b id="note-table">guru</b> di Supabase.
+        <b id="note-table">guru</b> di database lokal.
       </p>
     </form>
   </div>

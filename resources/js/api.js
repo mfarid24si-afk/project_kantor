@@ -1,106 +1,80 @@
 /* =====================================================================
- * HELPER SUPABASE (FR-5)
- * Menggunakan pola API key yang sama persis dengan implementasi awal:
- *   - URL : `${SUPABASE_URL}/rest/v1/<table>`
- *   - Header : `apikey` + `Authorization: Bearer <SUPABASE_ANON_KEY>`
- * Struktur ini TIDAK diubah; hanya diperluas untuk tabel `siswa`
- * (baca: hitung jumlah per kabupaten) dan untuk tulis dari Form (POST).
+ * HELPER API LOKAL LARAVEL (MySQL Local Storage)
+ * Menggantikan remote Supabase dengan endpoint API internal Laravel.
+ * Semua data guru, siswa, komunitas, dan umum tersimpan di MySQL lokal.
  * ===================================================================== */
 
-import {
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  TABEL_GURU,
-  TABEL_SISWA,
-  TABEL_KOMUNITAS,
-  TABEL_UMUM,
-  KOLOM_KABUPATEN,
-} from './config.js';
+const API_BASE = '/api';
 
-function supabaseHeaders() {
+function defaultHeaders() {
   return {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   };
 }
 
-/** Ambil satu kolom dari sebuah tabel (GET). */
-async function fetchKolom(tableName, kolom) {
-  const url = `${SUPABASE_URL}/rest/v1/${tableName}?select=${kolom}`;
-  const res = await fetch(url, { headers: supabaseHeaders() });
+/** Jumlah guru per kabupaten (agregasi langsung dari database lokal). */
+export async function fetchJumlahGuruPerKabupaten() {
+  const res = await fetch(`${API_BASE}/guru/counts`, { headers: defaultHeaders() });
   if (!res.ok) {
-    throw new Error(`Supabase fetch gagal: ${res.status}`);
+    throw new Error(`Gagal mengambil data jumlah guru: ${res.status}`);
   }
   return res.json();
 }
 
-/** Hitung jumlah baris per kabupaten dari daftar baris hasil query. */
-function hitungPerKabupaten(rows) {
-  const counts = {};
-  for (const row of rows) {
-    const key = (row[KOLOM_KABUPATEN] || '').trim();
-    if (!key) continue;
-    counts[key] = (counts[key] || 0) + 1;
-  }
-  return counts;
-}
-
-/** Jumlah guru per kabupaten (pola `fetchJumlahGuruPerKabupaten` yang sudah ada). */
-export async function fetchJumlahGuruPerKabupaten() {
-  return hitungPerKabupaten(await fetchKolom(TABEL_GURU, KOLOM_KABUPATEN));
-}
-
-/** Jumlah siswa per kabupaten — tabel siswa tidak punya kolom kabupaten,
- * jadi selalu mengembalikan objek kosong. */
+/** Jumlah siswa per kabupaten. */
 export async function fetchJumlahSiswaPerKabupaten() {
-  return {};
+  const res = await fetch(`${API_BASE}/siswa/counts`, { headers: defaultHeaders() });
+  if (!res.ok) {
+    throw new Error(`Gagal mengambil data jumlah siswa: ${res.status}`);
+  }
+  return res.json();
 }
 
 /** Ambil baris data lengkap untuk sebuah kabupaten. */
 export async function fetchRowsByKabupaten(tableName, kabupaten) {
-  const url = `${SUPABASE_URL}/rest/v1/${tableName}?select=*&kabupaten=eq.${encodeURIComponent(kabupaten)}`;
-  const res = await fetch(url, { headers: supabaseHeaders() });
+  const url = `${API_BASE}/data/${tableName}?kabupaten=${encodeURIComponent(kabupaten)}`;
+  const res = await fetch(url, { headers: defaultHeaders() });
   if (!res.ok) {
-    throw new Error(`Supabase fetch gagal: ${res.status}`);
+    throw new Error(`Gagal mengambil data ${tableName}: ${res.status}`);
   }
   return res.json();
 }
 
-/** POST payload (satu baris ATAU array baris untuk bulk) ke tabel — header
- * identik dengan GET (FR-5.2). Catatan: response body POST bisa kosong (body
- * hanya error bila gagal), jadi cukup cek status — JANGAN diparse sebagai
- * JSON agar data yang tersimpan sukses tidak salah dilaporkan sebagai gagal.
- * `return=minimal` memangkas response (tidak perlu mengembalikan baris). */
-async function postRows(tableName, payload) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}`, {
-    method: 'POST',
-    headers: { ...supabaseHeaders(), Prefer: 'return=minimal' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Supabase insert gagal: ${res.status} — ${detail.slice(0, 200)}`);
-  }
-  return true;
-}
-
 /** Ambil semua baris dari sebuah tabel tanpa filter kabupaten. */
 export async function fetchAllRows(tableName) {
-  const url = `${SUPABASE_URL}/rest/v1/${tableName}?select=*&order=created_at.desc`;
-  const res = await fetch(url, { headers: supabaseHeaders() });
+  const url = `${API_BASE}/data/${tableName}`;
+  const res = await fetch(url, { headers: defaultHeaders() });
   if (!res.ok) {
-    throw new Error(`Supabase fetch gagal: ${res.status}`);
+    throw new Error(`Gagal mengambil data ${tableName}: ${res.status}`);
   }
   return res.json();
 }
 
 /** Kirim satu baris data ke tabel (POST) — dipakai Form. */
 export async function insertBaris(tableName, payload) {
-  return postRows(tableName, payload);
+  const res = await fetch(`${API_BASE}/data/${tableName}`, {
+    method: 'POST',
+    headers: defaultHeaders(),
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Gagal menyimpan data: ${res.status} — ${detail.slice(0, 200)}`);
+  }
+  return true;
 }
 
 /** Kirim banyak baris sekaligus (bulk insert untuk upload CSV). */
 export async function insertBanyakBaris(tableName, rows) {
-  return postRows(tableName, rows);
+  const res = await fetch(`${API_BASE}/data/${tableName}/batch`, {
+    method: 'POST',
+    headers: defaultHeaders(),
+    body: JSON.stringify(rows),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Gagal upload batch: ${res.status} — ${detail.slice(0, 200)}`);
+  }
+  return true;
 }

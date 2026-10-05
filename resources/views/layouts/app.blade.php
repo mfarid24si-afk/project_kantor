@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Peta interaktif sebaran guru dan siswa terimbas Revitalisasi Bahasa Daerah (Bahasa Melayu Riau) di 12 kabupaten/kota Provinsi Riau. Data realtime dari Supabase."
+      content="Peta interaktif sebaran guru dan siswa terimbas Revitalisasi Bahasa Daerah (Bahasa Melayu Riau) di 12 kabupaten/kota Provinsi Riau."
     />
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

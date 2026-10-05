@@ -193,7 +193,7 @@
         </button>
         <div class="feature-detail">
           <ul>
-            <li>Sinkron otomatis melalui Supabase</li>
+            <li>Sinkron otomatis melalui database sistem</li>
             <li>Perubahan dapat dilihat pengguna tanpa reload manual</li>
           </ul>
         </div>
@@ -257,7 +257,7 @@
           <span class="faq-icon" aria-hidden="true">+</span>
         </button>
         <div class="faq-a">
-          <p>Ya. Data guru dan siswa yang ditambahkan melalui form akan diperbarui pada sistem secara otomatis melalui Supabase.</p>
+          <p>Ya. Data guru dan siswa yang ditambahkan melalui form akan diperbarui pada sistem secara otomatis melalui database lokal.</p>
         </div>
       </div>
 

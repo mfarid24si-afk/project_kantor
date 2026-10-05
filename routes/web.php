@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PetaController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KabupatenController;
+use App\Http\Controllers\PetaController;
 use App\Http\Controllers\TentangController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,16 @@ Route::get('/form', [FormController::class, 'index'])->name('form');
 Route::get('/kabupaten', [KabupatenController::class, 'index'])->name('kabupaten.index');
 Route::get('/kabupaten/{name}', [KabupatenController::class, 'show'])->name('kabupaten.show');
 Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
+
+/*
+|--------------------------------------------------------------------------
+| Internal API Routes — Database Lokal MySQL
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api')->group(function () {
+    Route::get('/guru/counts', [ApiController::class, 'jumlahGuru'])->name('api.guru.counts');
+    Route::get('/siswa/counts', [ApiController::class, 'jumlahSiswa'])->name('api.siswa.counts');
+    Route::get('/data/{table}', [ApiController::class, 'getTableData'])->name('api.table.data');
+    Route::post('/data/{table}', [ApiController::class, 'insertRow'])->name('api.table.insert');
+    Route::post('/data/{table}/batch', [ApiController::class, 'insertBatch'])->name('api.table.batch');
+});
