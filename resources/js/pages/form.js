@@ -24,12 +24,12 @@ import { pageReady } from '../pageReadyManager.js';
 // Kolom yang wajib diisi per jenis data.
 const REQUIRED = {
   guru: new Set(['nama_guru', 'kabupaten', 'asal_sekolah']),
-  siswa: new Set(['nama_siswa', 'sekolah']),
-  komunitas: new Set(['nama_individu', 'nama_komunitas']),
-  umum: new Set(['nama_umum', 'pekerjaan']),
+  siswa: new Set(['nama_siswa', 'kabupaten', 'sekolah']),
+  komunitas: new Set(['nama_individu', 'kabupaten', 'nama_komunitas']),
+  umum: new Set(['nama_umum', 'kabupaten', 'pekerjaan']),
 };
 
-// Metadata tampilan & aturan per kolom (key = nama kolom di Supabase).
+// Metadata tampilan & aturan per kolom (key = nama kolom).
 const FIELD_META = {
   // Guru
   nama_guru: { label: 'Nama Guru', placeholder: 'Nama lengkap guru', autocomplete: 'name' },
@@ -56,9 +56,9 @@ const FIELD_META = {
 
 const JENIS = {
   guru: { table: TABEL_GURU, label: 'guru', columns: KOLOM_GURU, hasKabupaten: true },
-  siswa: { table: TABEL_SISWA, label: 'siswa', columns: KOLOM_SISWA, hasKabupaten: false },
-  komunitas: { table: TABEL_KOMUNITAS, label: 'komunitas', columns: KOLOM_KOMUNITAS, hasKabupaten: false },
-  umum: { table: TABEL_UMUM, label: 'umum', columns: KOLOM_UMUM, hasKabupaten: false },
+  siswa: { table: TABEL_SISWA, label: 'siswa', columns: KOLOM_SISWA, hasKabupaten: true },
+  komunitas: { table: TABEL_KOMUNITAS, label: 'komunitas', columns: KOLOM_KOMUNITAS, hasKabupaten: true },
+  umum: { table: TABEL_UMUM, label: 'umum', columns: KOLOM_UMUM, hasKabupaten: true },
 };
 
 // Upload CSV: jumlah baris maksimal per request (batch).
@@ -112,7 +112,7 @@ export function renderForm(container) {
           <button type="submit" class="btn btn-primary form-submit" id="btn-submit">Simpan Data</button>
           <p class="form-note">
             Data yang diisi akan tercatat pada tabel
-            <b id="note-table">guru</b> di Supabase.
+            <b id="note-table">guru</b> di database lokal.
           </p>
         </form>
       </div>
@@ -310,7 +310,7 @@ export function initForm(container = document) {
     } catch (err) {
       console.error(err);
       showToast(
-        `Gagal menyimpan: ${err.message}. Periksa izin RLS tabel di Supabase.`,
+        `Gagal menyimpan: ${err.message}.`,
         'error'
       );
     } finally {

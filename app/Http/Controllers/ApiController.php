@@ -32,6 +32,7 @@ class ApiController extends Controller
     public function jumlahGuru(): JsonResponse
     {
         $counts = Guru::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten')
             ->groupBy('kabupaten')
             ->pluck('total', 'kabupaten')
             ->toArray();
@@ -44,7 +45,41 @@ class ApiController extends Controller
      */
     public function jumlahSiswa(): JsonResponse
     {
-        return response()->json([]);
+        $counts = Siswa::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten')
+            ->groupBy('kabupaten')
+            ->pluck('total', 'kabupaten')
+            ->toArray();
+
+        return response()->json($counts);
+    }
+
+    /**
+     * Hitung jumlah komunitas per kabupaten.
+     */
+    public function jumlahKomunitas(): JsonResponse
+    {
+        $counts = Komunitas::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten')
+            ->groupBy('kabupaten')
+            ->pluck('total', 'kabupaten')
+            ->toArray();
+
+        return response()->json($counts);
+    }
+
+    /**
+     * Hitung jumlah umum per kabupaten.
+     */
+    public function jumlahUmum(): JsonResponse
+    {
+        $counts = Umum::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten')
+            ->groupBy('kabupaten')
+            ->pluck('total', 'kabupaten')
+            ->toArray();
+
+        return response()->json($counts);
     }
 
     /**
@@ -59,7 +94,7 @@ class ApiController extends Controller
 
         $query = $modelClass::query()->orderBy('created_at', 'desc');
 
-        if ($request->has('kabupaten') && $table === 'guru') {
+        if ($request->has('kabupaten') && in_array($table, ['guru', 'siswa', 'komunitas', 'umum'])) {
             $query->where('kabupaten', $request->query('kabupaten'));
         }
 

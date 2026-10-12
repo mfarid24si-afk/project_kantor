@@ -24,9 +24,9 @@ const PER_PAGE = 10;
 /** Konfigurasi 4 tabel. */
 const TABLES = [
   { key: 'guru', label: 'Guru', table: TABEL_GURU, columns: KOLOM_GURU, hasKabupaten: true },
-  { key: 'siswa', label: 'Siswa', table: TABEL_SISWA, columns: KOLOM_SISWA, hasKabupaten: false },
-  { key: 'komunitas', label: 'Komunitas', table: TABEL_KOMUNITAS, columns: KOLOM_KOMUNITAS, hasKabupaten: false },
-  { key: 'umum', label: 'Umum', table: TABEL_UMUM, columns: KOLOM_UMUM, hasKabupaten: false },
+  { key: 'siswa', label: 'Siswa', table: TABEL_SISWA, columns: KOLOM_SISWA, hasKabupaten: true },
+  { key: 'komunitas', label: 'Komunitas', table: TABEL_KOMUNITAS, columns: KOLOM_KOMUNITAS, hasKabupaten: true },
+  { key: 'umum', label: 'Umum', table: TABEL_UMUM, columns: KOLOM_UMUM, hasKabupaten: true },
 ];
 
 function renderRowValue(value) {
@@ -355,10 +355,10 @@ export async function initKabupaten(container = document, kabName = null) {
 
   try {
     const results = await Promise.allSettled([
-      fetchRowsByKabupaten(TABEL_GURU, kabupaten),     // guru: filter by kabupaten
-      fetchAllRows(TABEL_SISWA),                        // siswa: semua data
-      fetchAllRows(TABEL_KOMUNITAS),                    // komunitas: semua data
-      fetchAllRows(TABEL_UMUM),                         // umum: semua data
+      fetchRowsByKabupaten(TABEL_GURU, kabupaten),
+      fetchRowsByKabupaten(TABEL_SISWA, kabupaten),
+      fetchRowsByKabupaten(TABEL_KOMUNITAS, kabupaten),
+      fetchRowsByKabupaten(TABEL_UMUM, kabupaten),
     ]);
 
     const labels = ['Guru', 'Siswa', 'Komunitas', 'Umum'];

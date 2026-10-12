@@ -14,6 +14,7 @@ class Komunitas extends Model
     protected $fillable = [
         'nama_individu',
         'nama_komunitas',
+        'kabupaten',
         'alamat_afiliasi',
     ];
 }

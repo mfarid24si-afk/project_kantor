@@ -19,8 +19,15 @@ class SiswaFactory extends Factory
      */
     public function definition(): array
     {
+        $kabupatenList = [
+            'Bengkalis', 'Dumai', 'Indragiri Hilir', 'Indragiri Hulu',
+            'Kampar', 'Kuantansingingi', 'Meranti', 'Pekanbaru',
+            'Pelalawan', 'Rohil', 'Rohul', 'Siak',
+        ];
+
         return [
             'nama_siswa' => fake()->name(),
+            'kabupaten' => fake()->randomElement($kabupatenList),
             'sekolah' => 'SMAN '.fake()->numberBetween(1, 10).' '.fake()->city(),
             'nis' => fake()->numerify('##########'),
             'alamat_sekolah' => fake()->address(),

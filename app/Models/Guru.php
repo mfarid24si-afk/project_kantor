@@ -19,5 +19,17 @@ class Guru extends Model
         'kelurahan',
         'provinsi',
         'nama_guru_utama',
+        'guru_utama_id',
+        'kegiatan_id',
     ];
+
+    public function guruUtama()
+    {
+        return $this->belongsTo(GuruUtama::class, 'guru_utama_id');
+    }
+
+    public function kegiatan()
+    {
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id');
+    }
 }

@@ -28,6 +28,8 @@ import { GEOJSON_PATH, GEOJSON_PROP_NAMA, REFRESH_INTERVAL, KABUPATEN_LIST } fro
 import {
   fetchJumlahGuruPerKabupaten,
   fetchJumlahSiswaPerKabupaten,
+  fetchJumlahKomunitasPerKabupaten,
+  fetchJumlahUmumPerKabupaten,
 } from '../api.js';
 import { escapeHtml } from '../ui.js';
 import { footerHtml } from '../footer.js';
@@ -40,8 +42,12 @@ const NO_DATA_SWATCH = '#b2b8be';
 
 let jumlahGuru = {};
 let jumlahSiswa = {};
+let jumlahKomunitas = {};
+let jumlahUmum = {};
 let guruFailed = false;
 let siswaFailed = false;
+let komunitasFailed = false;
+let umumFailed = false;
 
 function getLabelGeometry(feature) {
   const geometry = feature.getGeometry();
@@ -56,7 +62,10 @@ function styleFeature(feature) {
   const labelGeometry = getLabelGeometry(feature);
 
   const hasData =
-    (jumlahGuru[namaKabupaten] || 0) + (jumlahSiswa[namaKabupaten] || 0) > 0;
+    (jumlahGuru[namaKabupaten] || 0) +
+    (jumlahSiswa[namaKabupaten] || 0) +
+    (jumlahKomunitas[namaKabupaten] || 0) +
+    (jumlahUmum[namaKabupaten] || 0) > 0;
 
   const polygonStyle = new Style({
     fill: new Fill({ color: hasData ? getColorForKabupaten(namaKabupaten) : NO_DATA_COLOR }),
@@ -98,6 +107,10 @@ export function renderPeta(container) {
         <p class="panel-sub" id="panel-updated">Memuat data…</p>
 
         <div class="panel-total">
+          <div class="mini-stat mini-stat--total">
+            <b id="total-semua">–</b>
+            <span>Total Data</span>
+          </div>
           <div class="mini-stat">
             <b id="total-guru">–</b>
             <span>Guru</span>
@@ -105,6 +118,14 @@ export function renderPeta(container) {
           <div class="mini-stat">
             <b id="total-siswa">–</b>
             <span>Siswa</span>
+          </div>
+          <div class="mini-stat">
+            <b id="total-komunitas">–</b>
+            <span>Komunitas</span>
+          </div>
+          <div class="mini-stat">
+            <b id="total-umum">–</b>
+            <span>Umum</span>
           </div>
         </div>
 
@@ -126,7 +147,7 @@ export function renderPeta(container) {
             <div class="legend-title">Wilayah</div>
             <button id="toggle-legend" class="legend-toggle" type="button">Sembunyikan</button>
           </div>
-          <p class="legend-sub">Angka pada legenda = guru · siswa</p>
+          <p class="legend-sub">Angka pada legenda = total data wilayah</p>
           <div id="legend-body"></div>
         </div>
       </aside>
@@ -140,6 +161,8 @@ export function renderPeta(container) {
 export function initPeta(container = document) {
   jumlahGuru = {};
   jumlahSiswa = {};
+  jumlahKomunitas = {};
+  jumlahUmum = {};
 
   const mapEl = container.querySelector('#map') || document.getElementById('map');
   if (!mapEl) return () => {};
@@ -226,6 +249,9 @@ export function initPeta(container = document) {
   function setPopupContent(name) {
     const guru = jumlahGuru[name] || 0;
     const siswa = jumlahSiswa[name] || 0;
+    const komunitas = jumlahKomunitas[name] || 0;
+    const umum = jumlahUmum[name] || 0;
+    const total = guru + siswa + komunitas + umum;
     popupContent.innerHTML = `
       <p class="popup-title">${escapeHtml(name)}</p>
       <div class="popup-grid">
@@ -237,8 +263,16 @@ export function initPeta(container = document) {
           <b>${siswa.toLocaleString('id-ID')}</b>
           <span>Siswa</span>
         </div>
+        <div class="popup-item">
+          <b>${komunitas.toLocaleString('id-ID')}</b>
+          <span>Komunitas</span>
+        </div>
+        <div class="popup-item">
+          <b>${umum.toLocaleString('id-ID')}</b>
+          <span>Umum</span>
+        </div>
       </div>
-      <p class="popup-total">Total <b>${(guru + siswa).toLocaleString('id-ID')}</b> data terdata</p>
+      <p class="popup-total">Total <b>${total.toLocaleString('id-ID')}</b> data terdata</p>
       <div class="popup-actions">
         <a class="btn btn-outline" href="/kabupaten/${encodeURIComponent(name)}" data-route>
           Lihat detail ${escapeHtml(name)}
@@ -320,11 +354,11 @@ export function initPeta(container = document) {
     if (refreshing) return;
     refreshing = true;
     try {
-      // Dijalankan independen: jika salah satu tabel gagal (mis. tabel siswa
-      // belum dibuat), data tabel lain tetap tampil.
-      const [guruRes, siswaRes] = await Promise.allSettled([
+      const [guruRes, siswaRes, komunitasRes, umumRes] = await Promise.allSettled([
         fetchJumlahGuruPerKabupaten(),
         fetchJumlahSiswaPerKabupaten(),
+        fetchJumlahKomunitasPerKabupaten(),
+        fetchJumlahUmumPerKabupaten(),
       ]);
       // Halaman sudah ditinggalkan — jangan sentuh DOM yang sudah dibuang.
       if (disposed) return;
@@ -341,7 +375,21 @@ export function initPeta(container = document) {
         siswaFailed = false;
       } else {
         siswaFailed = true;
-        console.warn('Gagal memuat data siswa (apakah tabel siswa sudah dibuat?):', siswaRes.reason);
+        console.warn('Gagal memuat data siswa:', siswaRes.reason);
+      }
+      if (komunitasRes.status === 'fulfilled') {
+        jumlahKomunitas = komunitasRes.value;
+        komunitasFailed = false;
+      } else {
+        komunitasFailed = true;
+        console.warn('Gagal memuat data komunitas:', komunitasRes.reason);
+      }
+      if (umumRes.status === 'fulfilled') {
+        jumlahUmum = umumRes.value;
+        umumFailed = false;
+      } else {
+        umumFailed = true;
+        console.warn('Gagal memuat data umum:', umumRes.reason);
       }
       renderPanel();
       vectorLayer.changed();
@@ -353,17 +401,34 @@ export function initPeta(container = document) {
   function renderPanel() {
     const totalGuru = Object.values(jumlahGuru).reduce((a, b) => a + b, 0);
     const totalSiswa = Object.values(jumlahSiswa).reduce((a, b) => a + b, 0);
-    // Tampilkan "—" bila sumber data gagal dimuat (bukan 0 yang menyesatkan).
-    document.getElementById('total-guru').textContent = guruFailed ? '—' : totalGuru.toLocaleString('id-ID');
-    document.getElementById('total-siswa').textContent = siswaFailed ? '—' : totalSiswa.toLocaleString('id-ID');
+    const totalKomunitas = Object.values(jumlahKomunitas).reduce((a, b) => a + b, 0);
+    const totalUmum = Object.values(jumlahUmum).reduce((a, b) => a + b, 0);
+    const totalSemua = totalGuru + totalSiswa + totalKomunitas + totalUmum;
+    const allFailed = guruFailed && siswaFailed && komunitasFailed && umumFailed;
+
+    const elTotalSemua = document.getElementById('total-semua');
+    const elTotalGuru = document.getElementById('total-guru');
+    const elTotalSiswa = document.getElementById('total-siswa');
+    const elTotalKomunitas = document.getElementById('total-komunitas');
+    const elTotalUmum = document.getElementById('total-umum');
+
+    if (elTotalSemua) elTotalSemua.textContent = allFailed ? '—' : totalSemua.toLocaleString('id-ID');
+    if (elTotalGuru) elTotalGuru.textContent = guruFailed ? '—' : totalGuru.toLocaleString('id-ID');
+    if (elTotalSiswa) elTotalSiswa.textContent = siswaFailed ? '—' : totalSiswa.toLocaleString('id-ID');
+    if (elTotalKomunitas) elTotalKomunitas.textContent = komunitasFailed ? '—' : totalKomunitas.toLocaleString('id-ID');
+    if (elTotalUmum) elTotalUmum.textContent = umumFailed ? '—' : totalUmum.toLocaleString('id-ID');
+
     document.getElementById('panel-updated').textContent =
       `Perbarui otomatis tiap ${Math.round(REFRESH_INTERVAL / 1000)} detik · ${new Date().toLocaleTimeString('id-ID')}`;
 
-    // Legenda: warna + nama wilayah + jumlah guru/siswa.
-    // Hanya tampilkan 12 wilayah resmi dari geojson — abaikan data
-    // dengan nama kabupaten yang tidak cocok poligon mana pun (FR-7).
+    // Legenda: warna + nama wilayah + total data wilayah.
     const names = Array.from(
-      new Set([...Object.keys(jumlahGuru), ...Object.keys(jumlahSiswa)])
+      new Set([
+        ...Object.keys(jumlahGuru),
+        ...Object.keys(jumlahSiswa),
+        ...Object.keys(jumlahKomunitas),
+        ...Object.keys(jumlahUmum),
+      ])
     )
       .filter((n) => KABUPATEN_LIST.includes(n))
       .sort((a, b) => a.localeCompare(b, 'id'));
@@ -374,13 +439,17 @@ export function initPeta(container = document) {
     legendBody.innerHTML =
       names
         .map((name) => {
-          const guru = guruFailed ? '—' : (jumlahGuru[name] || 0).toLocaleString('id-ID');
-          const siswa = siswaFailed ? '—' : (jumlahSiswa[name] || 0).toLocaleString('id-ID');
+          const g = jumlahGuru[name] || 0;
+          const s = jumlahSiswa[name] || 0;
+          const k = jumlahKomunitas[name] || 0;
+          const u = jumlahUmum[name] || 0;
+          const totalKab = g + s + k + u;
+          const tooltip = `Guru: ${g}, Siswa: ${s}, Komunitas: ${k}, Umum: ${u}`;
           return `
-            <div class="legend-row">
+            <div class="legend-row" title="${escapeHtml(tooltip)}">
               <span class="legend-swatch" style="background:${getColorForKabupaten(name)}" aria-hidden="true"></span>
               <span class="legend-name">${escapeHtml(name)}</span>
-              <span class="legend-count">${guru} · ${siswa}</span>
+              <span class="legend-count">${totalKab.toLocaleString('id-ID')}</span>
             </div>
           `;
         })

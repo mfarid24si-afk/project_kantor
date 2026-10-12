@@ -21,6 +21,8 @@ class GuruModelTest extends TestCase
             'kelurahan',
             'provinsi',
             'nama_guru_utama',
+            'guru_utama_id',
+            'kegiatan_id',
         ];
 
         $this->assertEquals($expectedFillable, $guru->getFillable());

@@ -16,6 +16,7 @@ class UmumModelTest extends TestCase
         $expectedFillable = [
             'nama_umum',
             'pekerjaan',
+            'kabupaten',
             'alamat',
         ];
 

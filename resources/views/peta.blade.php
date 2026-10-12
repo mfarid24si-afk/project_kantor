@@ -16,6 +16,10 @@
     <p class="panel-sub" id="panel-updated">Memuat data…</p>
 
     <div class="panel-total">
+      <div class="mini-stat mini-stat--total">
+        <b id="total-semua">—</b>
+        <span>Total Data</span>
+      </div>
       <div class="mini-stat">
         <b id="total-guru">—</b>
         <span>Guru</span>
@@ -23,6 +27,14 @@
       <div class="mini-stat">
         <b id="total-siswa">—</b>
         <span>Siswa</span>
+      </div>
+      <div class="mini-stat">
+        <b id="total-komunitas">—</b>
+        <span>Komunitas</span>
+      </div>
+      <div class="mini-stat">
+        <b id="total-umum">—</b>
+        <span>Umum</span>
       </div>
     </div>
 
@@ -53,7 +65,7 @@
         <div class="legend-title">Wilayah</div>
         <button id="toggle-legend" class="legend-toggle" type="button">Sembunyikan</button>
       </div>
-      <p class="legend-sub">Angka pada legenda = guru · siswa</p>
+      <p class="legend-sub">Angka pada legenda = total data wilayah</p>
       <div id="legend-body"></div>
     </div>
   </aside>

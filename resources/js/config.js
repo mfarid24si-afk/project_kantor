@@ -21,20 +21,18 @@ export const TABEL_SISWA = 'siswa';
 export const TABEL_KOMUNITAS = 'komunitas';
 export const TABEL_UMUM = 'umum';
 
-// Nama kolom kabupaten — hanya tabel `guru` yang memiliki kolom ini.
+// Nama kolom kabupaten.
 export const KOLOM_KABUPATEN = 'kabupaten';
 
 // Daftar 4 tabel utama untuk form & detail.
 export const SEMUA_TABEL = [
   { key: 'guru', table: TABEL_GURU, label: 'Guru', hasKabupaten: true },
-  { key: 'siswa', table: TABEL_SISWA, label: 'Siswa', hasKabupaten: false },
-  { key: 'komunitas', table: TABEL_KOMUNITAS, label: 'Komunitas', hasKabupaten: false },
-  { key: 'umum', table: TABEL_UMUM, label: 'Umum', hasKabupaten: false },
+  { key: 'siswa', table: TABEL_SISWA, label: 'Siswa', hasKabupaten: true },
+  { key: 'komunitas', table: TABEL_KOMUNITAS, label: 'Komunitas', hasKabupaten: true },
+  { key: 'umum', table: TABEL_UMUM, label: 'Umum', hasKabupaten: true },
 ];
 
-// Kolom tabel `guru` — SKEMA ASLI di Supabase (hasil verifikasi langsung):
-// id, nama_guru, nuptk, asal_sekolah, kelurahan, kabupaten, provinsi,
-// nama_guru_utama, created_at.
+// Kolom tabel `guru`:
 export const KOLOM_GURU = [
   'nama_guru',
   'kabupaten',
@@ -45,17 +43,14 @@ export const KOLOM_GURU = [
   'nama_guru_utama',
 ];
 
-// Kolom tabel `siswa` — SKEMA ASLI di Supabase:
-// id, nama_siswa, sekolah, nis, alamat_sekolah, created_at.
-export const KOLOM_SISWA = ['nama_siswa', 'sekolah', 'nis', 'alamat_sekolah'];
+// Kolom tabel `siswa`:
+export const KOLOM_SISWA = ['nama_siswa', 'kabupaten', 'sekolah', 'nis', 'alamat_sekolah'];
 
-// Kolom tabel `komunitas` — SKEMA ASLI di Supabase:
-// id, nama_individu, nama_komunitas, alamat_afiliasi, created_at.
-export const KOLOM_KOMUNITAS = ['nama_individu', 'nama_komunitas', 'alamat_afiliasi'];
+// Kolom tabel `komunitas`:
+export const KOLOM_KOMUNITAS = ['nama_individu', 'nama_komunitas', 'kabupaten', 'alamat_afiliasi'];
 
-// Kolom tabel `umum` — SKEMA ASLI di Supabase:
-// id, nama_umum, pekerjaan, alamat, created_at.
-export const KOLOM_UMUM = ['nama_umum', 'pekerjaan', 'alamat'];
+// Kolom tabel `umum`:
+export const KOLOM_UMUM = ['nama_umum', 'pekerjaan', 'kabupaten', 'alamat'];
 
 // --- GeoJSON batas wilayah (dipakai apa adanya, tidak digambar ulang) ---
 export const GEOJSON_PATH = '/geojson/Area_Kab_Riau.geojson';

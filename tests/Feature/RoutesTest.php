@@ -72,10 +72,22 @@ class RoutesTest extends TestCase
 
     public function test_local_api_endpoints(): void
     {
-        // 1. Guru counts
-        $resCounts = $this->get('/api/guru/counts');
-        $resCounts->assertStatus(200);
-        $this->assertIsArray($resCounts->json());
+        // 1. Counts endpoints
+        $resGuruCounts = $this->get('/api/guru/counts');
+        $resGuruCounts->assertStatus(200);
+        $this->assertIsArray($resGuruCounts->json());
+
+        $resSiswaCounts = $this->get('/api/siswa/counts');
+        $resSiswaCounts->assertStatus(200);
+        $this->assertIsArray($resSiswaCounts->json());
+
+        $resKomunitasCounts = $this->get('/api/komunitas/counts');
+        $resKomunitasCounts->assertStatus(200);
+        $this->assertIsArray($resKomunitasCounts->json());
+
+        $resUmumCounts = $this->get('/api/umum/counts');
+        $resUmumCounts->assertStatus(200);
+        $this->assertIsArray($resUmumCounts->json());
 
         // 2. Table data
         $resGuru = $this->get('/api/data/guru');

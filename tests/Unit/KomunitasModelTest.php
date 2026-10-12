@@ -16,6 +16,7 @@ class KomunitasModelTest extends TestCase
         $expectedFillable = [
             'nama_individu',
             'nama_komunitas',
+            'kabupaten',
             'alamat_afiliasi',
         ];
 

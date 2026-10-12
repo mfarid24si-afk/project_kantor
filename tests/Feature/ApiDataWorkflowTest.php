@@ -29,12 +29,41 @@ class ApiDataWorkflowTest extends TestCase
         $this->assertEquals(1, $data['Siak']);
     }
 
-    public function test_api_siswa_counts_returns_json_array(): void
+    public function test_api_siswa_counts_returns_accurate_per_kabupaten_aggregation(): void
     {
+        Siswa::factory()->count(4)->create(['kabupaten' => 'Pekanbaru']);
+        Siswa::factory()->count(2)->create(['kabupaten' => 'Kampar']);
+
         $response = $this->getJson('/api/siswa/counts');
 
         $response->assertStatus(200);
-        $this->assertIsArray($response->json());
+        $data = $response->json();
+        $this->assertEquals(4, $data['Pekanbaru']);
+        $this->assertEquals(2, $data['Kampar']);
+    }
+
+    public function test_api_komunitas_counts_returns_accurate_per_kabupaten_aggregation(): void
+    {
+        Komunitas::factory()->count(3)->create(['kabupaten' => 'Bengkalis']);
+        Komunitas::factory()->count(1)->create(['kabupaten' => 'Dumai']);
+
+        $response = $this->getJson('/api/komunitas/counts');
+
+        $response->assertStatus(200);
+        $data = $response->json();
+        $this->assertEquals(3, $data['Bengkalis']);
+        $this->assertEquals(1, $data['Dumai']);
+    }
+
+    public function test_api_umum_counts_returns_accurate_per_kabupaten_aggregation(): void
+    {
+        Umum::factory()->count(5)->create(['kabupaten' => 'Siak']);
+
+        $response = $this->getJson('/api/umum/counts');
+
+        $response->assertStatus(200);
+        $data = $response->json();
+        $this->assertEquals(5, $data['Siak']);
     }
 
     public function test_api_get_table_data_for_all_valid_tables(): void
@@ -53,20 +82,29 @@ class ApiDataWorkflowTest extends TestCase
         }
     }
 
-    public function test_api_get_guru_table_data_filtered_by_kabupaten(): void
+    public function test_api_get_table_data_filtered_by_kabupaten_for_all_entities(): void
     {
         Guru::factory()->count(2)->create(['kabupaten' => 'Pelalawan']);
         Guru::factory()->count(3)->create(['kabupaten' => 'Dumai']);
+        Siswa::factory()->count(4)->create(['kabupaten' => 'Pelalawan']);
+        Komunitas::factory()->count(1)->create(['kabupaten' => 'Pelalawan']);
+        Umum::factory()->count(2)->create(['kabupaten' => 'Pelalawan']);
 
-        $response = $this->getJson('/api/data/guru?kabupaten=Pelalawan');
+        $resGuru = $this->getJson('/api/data/guru?kabupaten=Pelalawan');
+        $resGuru->assertStatus(200);
+        $this->assertCount(2, $resGuru->json());
 
-        $response->assertStatus(200);
-        $records = $response->json();
-        $this->assertCount(2, $records);
+        $resSiswa = $this->getJson('/api/data/siswa?kabupaten=Pelalawan');
+        $resSiswa->assertStatus(200);
+        $this->assertCount(4, $resSiswa->json());
 
-        foreach ($records as $record) {
-            $this->assertEquals('Pelalawan', $record['kabupaten']);
-        }
+        $resKomunitas = $this->getJson('/api/data/komunitas?kabupaten=Pelalawan');
+        $resKomunitas->assertStatus(200);
+        $this->assertCount(1, $resKomunitas->json());
+
+        $resUmum = $this->getJson('/api/data/umum?kabupaten=Pelalawan');
+        $resUmum->assertStatus(200);
+        $this->assertCount(2, $resUmum->json());
     }
 
     public function test_api_get_table_data_returns_404_for_invalid_table(): void
@@ -92,29 +130,32 @@ class ApiDataWorkflowTest extends TestCase
         // 2. Siswa
         $resSiswa = $this->postJson('/api/data/siswa', [
             'nama_siswa' => 'Bintang Pratama',
+            'kabupaten' => 'Siak',
             'sekolah' => 'SMPN 2 Siak',
             'nis' => '12345678',
         ]);
         $resSiswa->assertStatus(201);
-        $this->assertDatabaseHas('siswa', ['nama_siswa' => 'Bintang Pratama']);
+        $this->assertDatabaseHas('siswa', ['nama_siswa' => 'Bintang Pratama', 'kabupaten' => 'Siak']);
 
         // 3. Komunitas
         $resKomunitas = $this->postJson('/api/data/komunitas', [
             'nama_individu' => 'Datuk Maringgai',
             'nama_komunitas' => 'Lembaga Adat Melayu',
+            'kabupaten' => 'Pekanbaru',
             'alamat_afiliasi' => 'Pekanbaru',
         ]);
         $resKomunitas->assertStatus(201);
-        $this->assertDatabaseHas('komunitas', ['nama_komunitas' => 'Lembaga Adat Melayu']);
+        $this->assertDatabaseHas('komunitas', ['nama_komunitas' => 'Lembaga Adat Melayu', 'kabupaten' => 'Pekanbaru']);
 
         // 4. Umum
         $resUmum = $this->postJson('/api/data/umum', [
             'nama_umum' => 'Hasan Basri',
+            'kabupaten' => 'Dumai',
             'pekerjaan' => 'Wiraswasta',
             'alamat' => 'Dumai Barat',
         ]);
         $resUmum->assertStatus(201);
-        $this->assertDatabaseHas('umum', ['nama_umum' => 'Hasan Basri']);
+        $this->assertDatabaseHas('umum', ['nama_umum' => 'Hasan Basri', 'kabupaten' => 'Dumai']);
     }
 
     public function test_api_insert_single_row_returns_404_for_invalid_table(): void

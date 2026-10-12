@@ -15,9 +15,13 @@ class SiswaModelTest extends TestCase
         $siswa = new Siswa;
         $expectedFillable = [
             'nama_siswa',
+            'kabupaten',
             'sekolah',
             'nis',
             'alamat_sekolah',
+            'guru_utama_id',
+            'nama_guru_utama',
+            'kegiatan_id',
         ];
 
         $this->assertEquals($expectedFillable, $siswa->getFillable());

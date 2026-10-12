@@ -19,8 +19,15 @@ class UmumFactory extends Factory
      */
     public function definition(): array
     {
+        $kabupatenList = [
+            'Bengkalis', 'Dumai', 'Indragiri Hilir', 'Indragiri Hulu',
+            'Kampar', 'Kuantansingingi', 'Meranti', 'Pekanbaru',
+            'Pelalawan', 'Rohil', 'Rohul', 'Siak',
+        ];
+
         return [
             'nama_umum' => fake()->name(),
+            'kabupaten' => fake()->randomElement($kabupatenList),
             'pekerjaan' => fake()->jobTitle(),
             'alamat' => fake()->address(),
         ];

@@ -31,6 +31,24 @@ export async function fetchJumlahSiswaPerKabupaten() {
   return res.json();
 }
 
+/** Jumlah komunitas per kabupaten. */
+export async function fetchJumlahKomunitasPerKabupaten() {
+  const res = await fetch(`${API_BASE}/komunitas/counts`, { headers: defaultHeaders() });
+  if (!res.ok) {
+    throw new Error(`Gagal mengambil data jumlah komunitas: ${res.status}`);
+  }
+  return res.json();
+}
+
+/** Jumlah umum per kabupaten. */
+export async function fetchJumlahUmumPerKabupaten() {
+  const res = await fetch(`${API_BASE}/umum/counts`, { headers: defaultHeaders() });
+  if (!res.ok) {
+    throw new Error(`Gagal mengambil data jumlah umum: ${res.status}`);
+  }
+  return res.json();
+}
+
 /** Ambil baris data lengkap untuk sebuah kabupaten. */
 export async function fetchRowsByKabupaten(tableName, kabupaten) {
   const url = `${API_BASE}/data/${tableName}?kabupaten=${encodeURIComponent(kabupaten)}`;

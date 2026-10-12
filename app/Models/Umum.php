@@ -14,6 +14,7 @@ class Umum extends Model
     protected $fillable = [
         'nama_umum',
         'pekerjaan',
+        'kabupaten',
         'alamat',
     ];
 }

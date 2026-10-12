@@ -30,6 +30,14 @@ class PageNavigationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Sebaran Data Riau');
         $response->assertSee('id="map"', false);
+        $response->assertSee('id="total-semua"', false);
+        $response->assertSee('id="total-guru"', false);
+        $response->assertSee('id="total-siswa"', false);
+        $response->assertSee('id="total-komunitas"', false);
+        $response->assertSee('id="total-umum"', false);
+        $response->assertSee('Total Data');
+        $response->assertSee('Komunitas');
+        $response->assertSee('Umum');
         $response->assertSee('Bengkalis');
         $response->assertSee('Kampar');
         $response->assertSee('Pekanbaru');
