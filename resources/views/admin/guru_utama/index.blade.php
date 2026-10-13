@@ -4,11 +4,11 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <div>
-      <h2>Data Guru Utama</h2>
-      <p class="admin-page-desc">Kelola Guru Utama pembina yang bertugas mengimbaskan materi maestro kepada guru dan siswa.</p>
+      <h2>Akun Guru Utama</h2>
+      <p class="admin-page-desc">Kelola akun dan profil Guru Utama yang bertugas mengimbaskan materi maestro kepada guru dan siswa.</p>
     </div>
     <a href="{{ route('admin.guru_utama.create') }}" class="btn btn-primary">
-      + Tambah Guru Utama Baru
+      + Tambah Akun Guru Utama Baru
     </a>
   </div>
 

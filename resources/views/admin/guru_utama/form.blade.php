@@ -4,7 +4,7 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <div>
-      <h2>{{ $isEdit ? 'Edit Data Guru Utama' : 'Tambah Guru Utama Baru' }}</h2>
+      <h2>{{ $isEdit ? 'Edit Akun Guru Utama' : 'Tambah Akun Guru Utama Baru' }}</h2>
       <p class="admin-page-desc">
         {{ $isEdit ? 'Perbarui data diri dan akun login Guru Utama.' : 'Daftarkan Guru Utama beserta akun pengguna agar dapat login dan menginput data guru/siswa binaan.' }}
       </p>

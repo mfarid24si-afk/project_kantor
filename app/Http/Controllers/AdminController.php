@@ -39,7 +39,7 @@ class AdminController extends Controller
         ];
 
         return view('admin.dashboard', [
-            'title' => 'Dashboard Super Admin — Beringin',
+            'title' => 'Dashboard Admin — Super Admin',
             'stats' => $stats,
         ]);
     }
@@ -64,7 +64,7 @@ class AdminController extends Controller
         $maestros = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.maestro.index', [
-            'title' => 'Kelola Maestro — Super Admin',
+            'title' => 'Data Maestro — Super Admin',
             'maestros' => $maestros,
         ]);
     }
@@ -162,7 +162,7 @@ class AdminController extends Controller
         $guruUtamas = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.guru_utama.index', [
-            'title' => 'Kelola Guru Utama — Super Admin',
+            'title' => 'Akun Guru Utama — Super Admin',
             'guruUtamas' => $guruUtamas,
             'kabupatens' => $this->kabupatens,
         ]);
@@ -320,7 +320,7 @@ class AdminController extends Controller
         $kegiatans = $query->latest('tanggal_mulai')->paginate(10)->withQueryString();
 
         return view('admin.kegiatan.index', [
-            'title' => 'Kelola Kegiatan Pengimbasan — Super Admin',
+            'title' => 'Kelola Kegiatan — Super Admin',
             'kegiatans' => $kegiatans,
             'kabupatens' => $this->kabupatens,
         ]);

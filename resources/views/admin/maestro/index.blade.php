@@ -4,8 +4,8 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <div>
-      <h2>Data Maestro Bahasa &amp; Seni Budaya Melayu</h2>
-      <p class="admin-page-desc">Kelola tokoh budaya dan maestro yang memandu kegiatan pengimbasan.</p>
+      <h2>Data Maestro</h2>
+      <p class="admin-page-desc">Kelola data tokoh budaya dan maestro yang memandu kegiatan pengimbasan bahasa &amp; seni budaya Melayu.</p>
     </div>
     <a href="{{ route('admin.maestro.create') }}" class="btn btn-primary">
       + Tambah Maestro Baru

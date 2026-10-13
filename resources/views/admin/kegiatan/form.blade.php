@@ -4,7 +4,7 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <div>
-      <h2>{{ $isEdit ? 'Edit Kegiatan Pengimbasan' : 'Buat Kegiatan Pengimbasan Baru' }}</h2>
+      <h2>{{ $isEdit ? 'Edit Kegiatan Pengimbasan' : 'Tambah Kegiatan Baru' }}</h2>
       <p class="admin-page-desc">
         Atur kegiatan, jadwal pelaksanaan, serta tugaskan Maestro dan Guru Utama pendamping.
       </p>

@@ -4,35 +4,35 @@
 <div class="admin-dashboard">
   <!-- STATS OVERVIEW -->
   <div class="admin-stats-grid">
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon--blue">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-      </div>
-      <div class="admin-stat-body">
-        <span class="admin-stat-num">{{ number_format($stats['total_kegiatan'], 0, ',', '.') }}</span>
-        <span class="admin-stat-label">Total Kegiatan</span>
-      </div>
-    </div>
-
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon--amber">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-      <div class="admin-stat-body">
-        <span class="admin-stat-num">{{ number_format($stats['total_maestro'], 0, ',', '.') }}</span>
-        <span class="admin-stat-label">Maestro Terdaftar</span>
-      </div>
-    </div>
-
-    <div class="admin-stat-card">
+    <a href="{{ route('admin.guru_utama.index') }}" class="admin-stat-card" style="text-decoration: none; color: inherit;">
       <div class="admin-stat-icon admin-stat-icon--purple">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <div class="admin-stat-body">
         <span class="admin-stat-num">{{ number_format($stats['total_guru_utama'], 0, ',', '.') }}</span>
-        <span class="admin-stat-label">Guru Utama</span>
+        <span class="admin-stat-label">Akun Guru Utama</span>
       </div>
-    </div>
+    </a>
+
+    <a href="{{ route('admin.maestro.index') }}" class="admin-stat-card" style="text-decoration: none; color: inherit;">
+      <div class="admin-stat-icon admin-stat-icon--amber">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="admin-stat-body">
+        <span class="admin-stat-num">{{ number_format($stats['total_maestro'], 0, ',', '.') }}</span>
+        <span class="admin-stat-label">Data Maestro Terdaftar</span>
+      </div>
+    </a>
+
+    <a href="{{ route('admin.kegiatan.index') }}" class="admin-stat-card" style="text-decoration: none; color: inherit;">
+      <div class="admin-stat-icon admin-stat-icon--blue">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+      </div>
+      <div class="admin-stat-body">
+        <span class="admin-stat-num">{{ number_format($stats['total_kegiatan'], 0, ',', '.') }}</span>
+        <span class="admin-stat-label">Kelola Total Kegiatan</span>
+      </div>
+    </a>
 
     <div class="admin-stat-card">
       <div class="admin-stat-icon admin-stat-icon--green">

@@ -4,8 +4,8 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <div>
-      <h2>Data Kegiatan Pengimbasan</h2>
-      <p class="admin-page-desc">Kelola agenda pengimbasan seni &amp; budaya Melayu beserta penugasan Maestro dan Guru Utama.</p>
+      <h2>Kelola Kegiatan</h2>
+      <p class="admin-page-desc">Kelola agenda kegiatan pengimbasan seni &amp; budaya Melayu beserta penugasan Maestro dan Guru Utama.</p>
     </div>
     <a href="{{ route('admin.kegiatan.create') }}" class="btn btn-primary">
       + Buat Kegiatan Baru

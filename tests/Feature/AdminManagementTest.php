@@ -37,6 +37,31 @@ class AdminManagementTest extends TestCase
         $response->assertSee('Guru Utama');
     }
 
+    public function test_super_admin_sidebar_displays_menus_in_correct_order(): void
+    {
+        $response = $this->actingAs($this->admin)->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertSeeInOrder([
+            'Dashboard Admin',
+            'Akun Guru Utama',
+            'Data Maestro',
+            'Kelola Kegiatan',
+        ]);
+
+        $responseGuruUtama = $this->actingAs($this->admin)->get('/admin/guru-utama');
+        $responseGuruUtama->assertStatus(200);
+        $responseGuruUtama->assertSee('Akun Guru Utama');
+
+        $responseMaestro = $this->actingAs($this->admin)->get('/admin/maestro');
+        $responseMaestro->assertStatus(200);
+        $responseMaestro->assertSee('Data Maestro');
+
+        $responseKegiatan = $this->actingAs($this->admin)->get('/admin/kegiatan');
+        $responseKegiatan->assertStatus(200);
+        $responseKegiatan->assertSee('Kelola Kegiatan');
+    }
+
     public function test_super_admin_can_create_maestro(): void
     {
         $response = $this->actingAs($this->admin)->post('/admin/maestro', [
