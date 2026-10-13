@@ -53,6 +53,22 @@
             <span class="invalid-feedback">{{ $message }}</span>
           @enderror
         </div>
+        <div class="form-group">
+          <label for="tahun" class="form-label">Tahun Pelaksanaan Kegiatan</label>
+          <input
+            type="number"
+            id="tahun"
+            name="tahun"
+            class="form-control @error('tahun') is-invalid @enderror"
+            value="{{ old('tahun', $kegiatan->tahun ?? date('Y')) }}"
+            placeholder="Contoh: 2026"
+            min="2000"
+            max="2099"
+          />
+          @error('tahun')
+            <span class="invalid-feedback">{{ $message }}</span>
+          @enderror
+        </div>
 
         <div class="form-group">
           <label for="tempat" class="form-label">Lokasi / Tempat Pelaksanaan</label>

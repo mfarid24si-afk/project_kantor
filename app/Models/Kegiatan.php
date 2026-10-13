@@ -17,6 +17,7 @@ class Kegiatan extends Model
         'nama_kegiatan',
         'deskripsi',
         'kabupaten',
+        'tahun',
         'tempat',
         'tanggal_mulai',
         'tanggal_selesai',

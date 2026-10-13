@@ -34,23 +34,21 @@
       <div class="navbar-nav" id="navbar-nav">
         <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}" data-route="/">Beranda</a>
         <a class="nav-link {{ request()->is('peta') || request()->is('kabupaten*') ? 'active' : '' }}" href="{{ url('/peta') }}" data-route="/peta">Peta</a>
-        <a class="nav-link {{ request()->is('form') ? 'active' : '' }}" href="{{ url('/form') }}" data-route="/form">Input Data</a>
         <a class="nav-link {{ request()->is('tentang') ? 'active' : '' }}" href="{{ url('/tentang') }}" data-route="/tentang">Tentang</a>
         @auth
           @if(auth()->user()->isSuperAdmin())
-            <a class="nav-link {{ request()->is('admin*') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Super Admin</a>
-          @elseif(auth()->user()->isGuruUtama())
-            <a class="nav-link {{ request()->is('guru-utama*') ? 'active' : '' }}" href="{{ route('guru_utama.dashboard') }}">Portal Guru Utama</a>
+            <a class="nav-link nav-link--login {{ request()->is('admin*') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Portal Admin</a>
+          @else
+            <a class="nav-link nav-link--login {{ request()->is('guru-utama*') ? 'active' : '' }}" href="{{ route('guru_utama.dashboard') }}">Portal Guru Utama</a>
           @endif
           <form method="POST" action="{{ route('logout') }}" class="nav-logout-form" style="display:inline;">
             @csrf
             <button type="submit" class="nav-link nav-link--logout">Keluar</button>
           </form>
         @else
-          <a class="nav-link nav-link--login {{ request()->is('login') ? 'active' : '' }}" href="{{ route('login') }}">Masuk</a>
+          <a class="nav-link nav-link--login {{ request()->is('login') ? 'active' : '' }}" href="{{ route('login') }}">Masuk Portal</a>
         @endauth
       </div>
-
       <button
         class="navbar-toggle"
         id="navbar-toggle"

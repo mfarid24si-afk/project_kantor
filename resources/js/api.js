@@ -13,9 +13,19 @@ function defaultHeaders() {
   };
 }
 
+/** Dapatkan daftar tahun kegiatan. */
+export async function fetchTahunList() {
+  const res = await fetch(`${API_BASE}/tahun`, { headers: defaultHeaders() });
+  if (!res.ok) {
+    return [new Date().getFullYear()];
+  }
+  return res.json();
+}
+
 /** Jumlah guru per kabupaten (agregasi langsung dari database lokal). */
-export async function fetchJumlahGuruPerKabupaten() {
-  const res = await fetch(`${API_BASE}/guru/counts`, { headers: defaultHeaders() });
+export async function fetchJumlahGuruPerKabupaten(tahun = null) {
+  const url = tahun ? `${API_BASE}/guru/counts?tahun=${encodeURIComponent(tahun)}` : `${API_BASE}/guru/counts`;
+  const res = await fetch(url, { headers: defaultHeaders() });
   if (!res.ok) {
     throw new Error(`Gagal mengambil data jumlah guru: ${res.status}`);
   }
@@ -23,8 +33,9 @@ export async function fetchJumlahGuruPerKabupaten() {
 }
 
 /** Jumlah siswa per kabupaten. */
-export async function fetchJumlahSiswaPerKabupaten() {
-  const res = await fetch(`${API_BASE}/siswa/counts`, { headers: defaultHeaders() });
+export async function fetchJumlahSiswaPerKabupaten(tahun = null) {
+  const url = tahun ? `${API_BASE}/siswa/counts?tahun=${encodeURIComponent(tahun)}` : `${API_BASE}/siswa/counts`;
+  const res = await fetch(url, { headers: defaultHeaders() });
   if (!res.ok) {
     throw new Error(`Gagal mengambil data jumlah siswa: ${res.status}`);
   }

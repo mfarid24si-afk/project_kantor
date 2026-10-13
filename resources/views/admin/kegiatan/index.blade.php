@@ -73,6 +73,9 @@
                   </a>
                   <div class="table-sub">
                     <span class="badge badge--pill badge--blue">{{ $keg->kabupaten }}</span>
+                    @if($keg->tahun)
+                      <span class="badge badge--pill badge--purple">{{ $keg->tahun }}</span>
+                    @endif
                     @if($keg->tempat)
                       <span>• {{ $keg->tempat }}</span>
                     @endif

@@ -9,6 +9,7 @@ use App\Models\Maestro;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class GuruUtamaPortalTest extends TestCase
@@ -82,7 +83,7 @@ class GuruUtamaPortalTest extends TestCase
         $response->assertRedirect('/guru-utama/guru');
         $this->assertDatabaseHas('guru', [
             'nama_guru' => 'Guru Binaan Baru',
-            'asal_sekolah' => 'SMPN 2 Bengkalis',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
             'kabupaten' => 'Bengkalis',
             'guru_utama_id' => $this->guruUtama1->id,
             'nama_guru_utama' => $this->guruUtama1->nama,
@@ -101,7 +102,7 @@ class GuruUtamaPortalTest extends TestCase
         $response->assertRedirect('/guru-utama/siswa');
         $this->assertDatabaseHas('siswa', [
             'nama_siswa' => 'Siswa Binaan Baru',
-            'sekolah' => 'SMPN 2 Bengkalis',
+            'sekolah' => 'SMAN 1 Bengkalis',
             'kabupaten' => 'Bengkalis',
             'guru_utama_id' => $this->guruUtama1->id,
             'nama_guru_utama' => $this->guruUtama1->nama,
@@ -154,5 +155,196 @@ class GuruUtamaPortalTest extends TestCase
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('siswa', ['id' => $siswa->id]);
+    }
+
+    public function test_guru_utama_can_download_guru_and_siswa_template(): void
+    {
+        $responseGuru = $this->actingAs($this->user1)->get('/guru-utama/guru/template');
+        $responseGuru->assertStatus(200);
+        $responseGuru->assertHeader('Content-Disposition', 'attachment; filename="template_import_guru.csv"');
+
+        $responseSiswa = $this->actingAs($this->user1)->get('/guru-utama/siswa/template');
+        $responseSiswa->assertStatus(200);
+        $responseSiswa->assertHeader('Content-Disposition', 'attachment; filename="template_import_siswa.csv"');
+    }
+
+    public function test_guru_utama_can_import_guru_via_csv(): void
+    {
+        $csvContent = "nama_guru,asal_sekolah,kabupaten,nuptk,kelurahan\n".
+            "Guru Impor Satu,SMPN 1 Bengkalis,Bengkalis,111222,Kota\n".
+            "Guru Impor Dua,SMPN 2 Bengkalis,Bengkalis,333444,Desa\n";
+
+        $file = UploadedFile::fake()->createWithContent('import_guru.csv', $csvContent);
+
+        $response = $this->actingAs($this->user1)->post('/guru-utama/guru/import', [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect('/guru-utama/guru');
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('guru', [
+            'nama_guru' => 'Guru Impor Satu',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+        $this->assertDatabaseHas('guru', [
+            'nama_guru' => 'Guru Impor Dua',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+    }
+
+    public function test_guru_utama_can_import_siswa_via_csv(): void
+    {
+        $csvContent = "nama_siswa,sekolah,kabupaten,nis,alamat_sekolah\n".
+            "Siswa Impor Satu,SMPN 1 Bengkalis,Bengkalis,9991,Jl. Bengkalis\n".
+            "Siswa Impor Dua,SMPN 2 Bengkalis,Bengkalis,9992,Jl. Selat\n";
+
+        $file = UploadedFile::fake()->createWithContent('import_siswa.csv', $csvContent);
+
+        $response = $this->actingAs($this->user1)->post('/guru-utama/siswa/import', [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect('/guru-utama/siswa');
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('siswa', [
+            'nama_siswa' => 'Siswa Impor Satu',
+            'sekolah' => 'SMAN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+        $this->assertDatabaseHas('siswa', [
+            'nama_siswa' => 'Siswa Impor Dua',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+    }
+
+    public function test_guru_utama_can_edit_and_update_guru(): void
+    {
+        $guru = Guru::create([
+            'nama_guru' => 'Guru Awal',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+            'nama_guru_utama' => $this->guruUtama1->nama,
+        ]);
+
+        $resEdit = $this->actingAs($this->user1)->get("/guru-utama/guru/{$guru->id}/edit");
+        $resEdit->assertStatus(200);
+        $resEdit->assertSee('Guru Awal');
+
+        $resUpdate = $this->actingAs($this->user1)->put("/guru-utama/guru/{$guru->id}", [
+            'nama_guru' => 'Guru Terupdate',
+            'asal_sekolah' => 'SMAN 2 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'nuptk' => '1234567890123456',
+        ]);
+        $resUpdate->assertRedirect('/guru-utama/guru');
+
+        $this->assertDatabaseHas('guru', [
+            'id' => $guru->id,
+            'nama_guru' => 'Guru Terupdate',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
+        ]);
+
+        // User 2 cannot edit User 1's guru
+        $resUnauthorized = $this->actingAs($this->user2)->put("/guru-utama/guru/{$guru->id}", [
+            'nama_guru' => 'Hack Guru',
+            'asal_sekolah' => 'SMAN 2 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+        ]);
+        $resUnauthorized->assertStatus(403);
+    }
+
+    public function test_guru_utama_can_edit_and_update_siswa(): void
+    {
+        $siswa = Siswa::create([
+            'nama_siswa' => 'Murid Awal',
+            'sekolah' => 'SMPN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+            'nama_guru_utama' => $this->guruUtama1->nama,
+        ]);
+
+        $resEdit = $this->actingAs($this->user1)->get("/guru-utama/siswa/{$siswa->id}/edit");
+        $resEdit->assertStatus(200);
+        $resEdit->assertSee('Murid Awal');
+
+        $resUpdate = $this->actingAs($this->user1)->put("/guru-utama/siswa/{$siswa->id}", [
+            'nama_siswa' => 'Murid Terupdate',
+            'sekolah' => 'SMPN 2 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'nis' => '8888',
+        ]);
+        $resUpdate->assertRedirect('/guru-utama/siswa');
+
+        $this->assertDatabaseHas('siswa', [
+            'id' => $siswa->id,
+            'nama_siswa' => 'Murid Terupdate',
+            'sekolah' => 'SMAN 1 Bengkalis',
+        ]);
+
+        // User 2 cannot edit User 1's siswa
+        $resUnauthorized = $this->actingAs($this->user2)->put("/guru-utama/siswa/{$siswa->id}", [
+            'nama_siswa' => 'Hack Siswa',
+            'sekolah' => 'SMPN 2 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+        ]);
+        $resUnauthorized->assertStatus(403);
+    }
+
+    public function test_guru_utama_can_export_guru_and_siswa_rekap_csv(): void
+    {
+        Guru::create([
+            'nama_guru' => 'Guru Export Test',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+
+        Siswa::create([
+            'nama_siswa' => 'Siswa Export Test',
+            'sekolah' => 'SMPN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+
+        $resGuruExport = $this->actingAs($this->user1)->get('/guru-utama/guru/export');
+        $resGuruExport->assertStatus(200);
+        $this->assertStringContainsString('Guru Export Test', $resGuruExport->streamedContent());
+
+        $resSiswaExport = $this->actingAs($this->user1)->get('/guru-utama/siswa/export');
+        $resSiswaExport->assertStatus(200);
+        $this->assertStringContainsString('Siswa Export Test', $resSiswaExport->streamedContent());
+    }
+
+    public function test_guru_import_skips_duplicates(): void
+    {
+        Guru::create([
+            'nama_guru' => 'Guru Eksis',
+            'asal_sekolah' => 'SMAN 1 Bengkalis',
+            'kabupaten' => 'Bengkalis',
+            'nuptk' => '55555555',
+            'guru_utama_id' => $this->guruUtama1->id,
+        ]);
+
+        $csvContent = "nama_guru,asal_sekolah,kabupaten,nuptk\n".
+            "Guru Eksis,SMAN 1 Bengkalis,Bengkalis,55555555\n".
+            "Guru Baru,SMAN 2 Bengkalis,Bengkalis,66666666\n";
+
+        $file = UploadedFile::fake()->createWithContent('import_guru_duplikat.csv', $csvContent);
+
+        $response = $this->actingAs($this->user1)->post('/guru-utama/guru/import', [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect('/guru-utama/guru');
+        $response->assertSessionHas('success');
+        $this->assertStringContainsString('duplikat', session('success'));
+
+        $this->assertCount(2, Guru::where('guru_utama_id', $this->guruUtama1->id)->get());
     }
 }

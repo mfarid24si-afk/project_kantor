@@ -22,7 +22,6 @@
       <nav class="footer-links" aria-label="Navigasi footer">
         <a href="{{ url('/') }}">Beranda</a>
         <a href="{{ url('/peta') }}">Peta</a>
-        <a href="{{ url('/form') }}">Input Data</a>
         <a href="{{ url('/tentang') }}">Tentang</a>
       </nav>
     </div>

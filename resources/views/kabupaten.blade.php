@@ -13,10 +13,6 @@
     <p class="kabupaten-lead">
       Pilih tab di bawah untuk melihat data Guru, Siswa, Komunitas, atau Umum. Gunakan pencarian, filter, dan paginasi untuk menjelajah data.
     </p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="{{ url('/peta') }}" data-route="/peta">Kembali ke Peta</a>
-      <a class="btn btn-outline" href="{{ url('/form') }}" data-route="/form">Input Data</a>
-    </div>
   </section>
 
   <!-- TABBED NAVBAR untuk switch tabel -->

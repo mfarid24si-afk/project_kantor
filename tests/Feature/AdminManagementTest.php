@@ -187,6 +187,7 @@ class AdminManagementTest extends TestCase
         $response = $this->actingAs($this->admin)->post('/admin/kegiatan', [
             'nama_kegiatan' => 'Festival Budaya Kampar 2026',
             'kabupaten' => 'Kampar',
+            'tahun' => 2026,
             'tempat' => 'Bangkinang Kota',
             'tanggal_mulai' => '2026-11-01',
             'tanggal_selesai' => '2026-11-03',
@@ -199,6 +200,7 @@ class AdminManagementTest extends TestCase
         $this->assertDatabaseHas('kegiatans', [
             'nama_kegiatan' => 'Festival Budaya Kampar 2026',
             'kabupaten' => 'Kampar',
+            'tahun' => 2026,
         ]);
 
         $kegiatan = Kegiatan::where('nama_kegiatan', 'Festival Budaya Kampar 2026')->first();

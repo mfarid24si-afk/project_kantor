@@ -26,6 +26,7 @@ import { getCenter } from 'ol/extent';
 
 import { GEOJSON_PATH, GEOJSON_PROP_NAMA, REFRESH_INTERVAL, KABUPATEN_LIST } from '../config.js';
 import {
+  fetchTahunList,
   fetchJumlahGuruPerKabupaten,
   fetchJumlahSiswaPerKabupaten,
   fetchJumlahKomunitasPerKabupaten,
@@ -227,6 +228,10 @@ export function initPeta(container = document) {
     }),
   });
 
+  setTimeout(() => {
+    map.updateSize();
+  }, 150);
+
   /* ------------------- Popup (FR-3.3) ------------------- */
   const popupElement = document.getElementById('popup');
   const popupCloseButton = document.getElementById('popup-closer');
@@ -316,36 +321,67 @@ export function initPeta(container = document) {
   });
 
   /* ------------------- Pemilih wilayah (keyboard) ------------------- */
-  document.getElementById('region-select').addEventListener('change', (e) => {
-    showRegion(e.target.value);
-  });
+  const regionSelect = document.getElementById('region-select');
+  if (regionSelect) {
+    regionSelect.addEventListener('change', (e) => {
+      showRegion(e.target.value);
+    });
+  }
+
+  /* ------------------- Pemilih tahun kegiatan ------------------- */
+  let selectedTahun = null;
+  const yearSelect = document.getElementById('year-select');
+  if (yearSelect) {
+    fetchTahunList()
+      .then((years) => {
+        if (Array.isArray(years)) {
+          years.forEach((yr) => {
+            const opt = document.createElement('option');
+            opt.value = yr;
+            opt.textContent = `Tahun ${yr}`;
+            yearSelect.appendChild(opt);
+          });
+        }
+      })
+      .catch((err) => console.warn('Gagal memuat daftar tahun:', err));
+
+    yearSelect.addEventListener('change', (e) => {
+      selectedTahun = e.target.value ? parseInt(e.target.value, 10) : null;
+      refreshData();
+    });
+  }
 
   /* ------------------- Kontrol (FR-3.6) ------------------- */
   const toggleBaseButton = document.getElementById('toggle-base');
   const togglePolygonsButton = document.getElementById('toggle-polygons');
 
-  toggleBaseButton.addEventListener('click', () => {
-    const visible = !baseLayer.getVisible();
-    baseLayer.setVisible(visible);
-    toggleBaseButton.textContent = visible ? 'Sembunyikan Peta Dasar' : 'Tampilkan Peta Dasar';
-  });
+  if (toggleBaseButton) {
+    toggleBaseButton.addEventListener('click', () => {
+      const visible = !baseLayer.getVisible();
+      baseLayer.setVisible(visible);
+      toggleBaseButton.textContent = visible ? 'Sembunyikan Peta Dasar' : 'Tampilkan Peta Dasar';
+    });
+  }
 
-  togglePolygonsButton.addEventListener('click', () => {
-    const visible = !vectorLayer.getVisible();
-    vectorLayer.setVisible(visible);
-    togglePolygonsButton.textContent = visible ? 'Sembunyikan Poligon' : 'Tampilkan Poligon';
-  });
+  if (togglePolygonsButton) {
+    togglePolygonsButton.addEventListener('click', () => {
+      const visible = !vectorLayer.getVisible();
+      vectorLayer.setVisible(visible);
+      togglePolygonsButton.textContent = visible ? 'Sembunyikan Poligon' : 'Tampilkan Poligon';
+    });
+  }
 
   /* ------------------- Legenda (FR-3.7) ------------------- */
   const legendBody = document.getElementById('legend-body');
   const toggleLegendButton = document.getElementById('toggle-legend');
 
-  toggleLegendButton.addEventListener('click', () => {
-    const hidden = legendBody.style.display === 'none';
-    legendBody.style.display = hidden ? '' : 'none';
-    toggleLegendButton.textContent = hidden ? 'Sembunyikan' : 'Tampilkan';
-  });
-
+  if (toggleLegendButton && legendBody) {
+    toggleLegendButton.addEventListener('click', () => {
+      const hidden = legendBody.style.display === 'none';
+      legendBody.style.display = hidden ? '' : 'none';
+      toggleLegendButton.textContent = hidden ? 'Sembunyikan' : 'Tampilkan';
+    });
+  }
   /* ------------------- Ambil & tampilkan data ------------------- */
   let refreshing = false;
   let disposed = false;
@@ -355,8 +391,8 @@ export function initPeta(container = document) {
     refreshing = true;
     try {
       const [guruRes, siswaRes, komunitasRes, umumRes] = await Promise.allSettled([
-        fetchJumlahGuruPerKabupaten(),
-        fetchJumlahSiswaPerKabupaten(),
+        fetchJumlahGuruPerKabupaten(selectedTahun),
+        fetchJumlahSiswaPerKabupaten(selectedTahun),
         fetchJumlahKomunitasPerKabupaten(),
         fetchJumlahUmumPerKabupaten(),
       ]);
@@ -418,26 +454,28 @@ export function initPeta(container = document) {
     if (elTotalKomunitas) elTotalKomunitas.textContent = komunitasFailed ? '—' : totalKomunitas.toLocaleString('id-ID');
     if (elTotalUmum) elTotalUmum.textContent = umumFailed ? '—' : totalUmum.toLocaleString('id-ID');
 
-    document.getElementById('panel-updated').textContent =
-      `Perbarui otomatis tiap ${Math.round(REFRESH_INTERVAL / 1000)} detik · ${new Date().toLocaleTimeString('id-ID')}`;
+    const panelUpdated = document.getElementById('panel-updated');
+    if (panelUpdated) {
+      panelUpdated.textContent =
+        `Perbarui otomatis tiap ${Math.round(REFRESH_INTERVAL / 1000)} detik · ${new Date().toLocaleTimeString('id-ID')}`;
+    }
 
-    // Legenda: warna + nama wilayah + total data wilayah.
-    const names = Array.from(
-      new Set([
-        ...Object.keys(jumlahGuru),
-        ...Object.keys(jumlahSiswa),
-        ...Object.keys(jumlahKomunitas),
-        ...Object.keys(jumlahUmum),
-      ])
-    )
-      .filter((n) => KABUPATEN_LIST.includes(n))
-      .sort((a, b) => a.localeCompare(b, 'id'));
+    if (legendBody) {
+      // Legenda: warna + nama wilayah + total data wilayah.
+      const names = Array.from(
+        new Set([
+          ...Object.keys(jumlahGuru),
+          ...Object.keys(jumlahSiswa),
+          ...Object.keys(jumlahKomunitas),
+          ...Object.keys(jumlahUmum),
+        ])
+      )
+        .filter((n) => KABUPATEN_LIST.includes(n))
+        .sort((a, b) => a.localeCompare(b, 'id'));
 
-    // Baris "Belum ada data" hanya tampil bila ada wilayah yang belum terisi.
-    const adaWilayahKosong = names.length < KABUPATEN_LIST.length;
+      const adaWilayahKosong = names.length < KABUPATEN_LIST.length;
 
-    legendBody.innerHTML =
-      names
+      legendBody.innerHTML = names
         .map((name) => {
           const g = jumlahGuru[name] || 0;
           const s = jumlahSiswa[name] || 0;
@@ -462,6 +500,7 @@ export function initPeta(container = document) {
           </div>
         `
         : '');
+    }
   }
 
   // Polling otomatis — pola setInterval yang sudah ada (FR-3.5).

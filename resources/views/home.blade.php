@@ -22,11 +22,6 @@
         Pantau sejauh mana pengimbasan Revitalisasi Bahasa Daerah menjangkau guru dan siswa di seluruh kabupaten/kota Provinsi Riau melalui satu platform digital yang informatif dan mudah diakses.
       </p>
 
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ url('/peta') }}" data-route="/peta">
-          Buka Peta
-        </a>
-      </div>
     </div>
   </section>
 
@@ -144,8 +139,8 @@
         <span class="step-icon" aria-hidden="true">
           <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
         </span>
-        <h3>Input Data</h3>
-        <p>Tambahkan data guru atau siswa melalui halaman form pengimbasan.</p>
+        <h3>Pantau Capaian</h3>
+        <p>Lihat rincian data guru, siswa, dan komunitas di setiap kabupaten/kota.</p>
       </article>
     </div>
   </section>
@@ -199,21 +194,21 @@
         </div>
       </article>
 
-      <!-- Form Input -->
+      <!-- Monitoring Terpadu -->
       <article class="feature-card feature-card--green">
         <span class="feature-icon" aria-hidden="true">
           <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
         </span>
-        <h3>Form Input</h3>
-        <p>Masukkan data guru dan siswa yang telah menerima pengimbasan melalui form yang sederhana dan mudah digunakan.</p>
+        <h3>Monitoring Terpadu</h3>
+        <p>Pemantauan berkala hasil pengimbasan Guru Utama dan Maestro seni Melayu di 12 kabupaten/kota.</p>
         <button type="button" class="feature-toggle" aria-expanded="false">
           <span>Lihat detail</span>
           <span class="feature-toggle-icon" aria-hidden="true">⌄</span>
         </button>
         <div class="feature-detail">
           <ul>
-            <li>Validasi otomatis sebelum data disimpan</li>
-            <li>Notifikasi setelah data berhasil dikirim</li>
+            <li>Data dihimpun dari laporan resmi Guru Utama</li>
+            <li>Rekapitulasi terverifikasi oleh Balai Bahasa Riau</li>
           </ul>
         </div>
       </article>
@@ -263,36 +258,27 @@
 
       <div class="faq-item">
         <button type="button" class="faq-q" aria-expanded="false">
-          <span>Bagaimana cara menambahkan data?</span>
+          <span>Siapa yang mencatat data pengimbasan?</span>
           <span class="faq-icon" aria-hidden="true">+</span>
         </button>
         <div class="faq-a">
-          <p>Buka halaman Form, pilih jenis data Guru atau Siswa, lengkapi data yang diperlukan, kemudian kirim data tersebut.</p>
+          <p>Data guru dan siswa terimbas dilaporkan secara berkala oleh Guru Utama yang telah ditugaskan dan dibina oleh Balai Bahasa Provinsi Riau.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- INFORMASI PROGRAM -->
   <section class="cta-band reveal">
     <div class="cta-content">
-      <span class="section-badge">Mulai Menjelajah</span>
+      <span class="section-badge">Revitalisasi Bahasa Daerah</span>
       <h2>
-        Jelajahi Data<br />
-        Pengimbasan Bahasa Melayu Riau
+        Pelestarian Bahasa Melayu<br />
+        Provinsi Riau
       </h2>
       <p>
-        Lihat persebaran data pada peta atau tambahkan data pengimbasan baru melalui form.
+        Platform digital pemetaan sebaran pengimbasan bahasa daerah untuk masa depan generasi Melayu Riau.
       </p>
-
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ url('/peta') }}" data-route="/peta">
-          Buka Peta
-        </a>
-        <a class="btn btn-light" href="{{ url('/form') }}" data-route="/form">
-          Input Data
-        </a>
-      </div>
     </div>
   </section>
 </div>

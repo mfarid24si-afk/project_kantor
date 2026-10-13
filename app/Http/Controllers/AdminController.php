@@ -38,21 +38,9 @@ class AdminController extends Controller
             'total_siswa_terimbas' => Siswa::count(),
         ];
 
-        $recentKegiatan = Kegiatan::with(['maestros', 'guruUtamas'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $recentGuruUtama = GuruUtama::with(['user', 'gurus', 'siswas'])
-            ->latest()
-            ->take(5)
-            ->get();
-
         return view('admin.dashboard', [
             'title' => 'Dashboard Super Admin — Beringin',
             'stats' => $stats,
-            'recentKegiatan' => $recentKegiatan,
-            'recentGuruUtama' => $recentGuruUtama,
         ]);
     }
 
@@ -358,6 +346,7 @@ class AdminController extends Controller
             'nama_kegiatan' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'kabupaten' => ['required', 'string', 'in:'.implode(',', $this->kabupatens)],
+            'tahun' => ['nullable', 'integer', 'min:2000', 'max:2099'],
             'tempat' => ['nullable', 'string', 'max:255'],
             'tanggal_mulai' => ['nullable', 'date'],
             'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
@@ -369,14 +358,18 @@ class AdminController extends Controller
         ], [
             'nama_kegiatan.required' => 'Nama kegiatan wajib diisi.',
             'kabupaten.required' => 'Kabupaten kegiatan wajib dipilih.',
+            'tahun.integer' => 'Tahun kegiatan harus berupa angka (misal: 2026).',
             'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai.',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        $tahun = $validated['tahun'] ?? (! empty($validated['tanggal_mulai']) ? (int) date('Y', strtotime($validated['tanggal_mulai'])) : (int) date('Y'));
+
+        DB::transaction(function () use ($validated, $tahun) {
             $kegiatan = Kegiatan::create([
                 'nama_kegiatan' => $validated['nama_kegiatan'],
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'kabupaten' => $validated['kabupaten'],
+                'tahun' => $tahun,
                 'tempat' => $validated['tempat'] ?? null,
                 'tanggal_mulai' => $validated['tanggal_mulai'] ?? null,
                 'tanggal_selesai' => $validated['tanggal_selesai'] ?? null,
@@ -433,6 +426,7 @@ class AdminController extends Controller
             'nama_kegiatan' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'kabupaten' => ['required', 'string', 'in:'.implode(',', $this->kabupatens)],
+            'tahun' => ['nullable', 'integer', 'min:2000', 'max:2099'],
             'tempat' => ['nullable', 'string', 'max:255'],
             'tanggal_mulai' => ['nullable', 'date'],
             'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
@@ -444,14 +438,18 @@ class AdminController extends Controller
         ], [
             'nama_kegiatan.required' => 'Nama kegiatan wajib diisi.',
             'kabupaten.required' => 'Kabupaten kegiatan wajib dipilih.',
+            'tahun.integer' => 'Tahun kegiatan harus berupa angka (misal: 2026).',
             'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai.',
         ]);
 
-        DB::transaction(function () use ($validated, $kegiatan) {
+        $tahun = $validated['tahun'] ?? (! empty($validated['tanggal_mulai']) ? (int) date('Y', strtotime($validated['tanggal_mulai'])) : ($kegiatan->tahun ?: (int) date('Y')));
+
+        DB::transaction(function () use ($validated, $kegiatan, $tahun) {
             $kegiatan->update([
                 'nama_kegiatan' => $validated['nama_kegiatan'],
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'kabupaten' => $validated['kabupaten'],
+                'tahun' => $tahun,
                 'tempat' => $validated['tempat'] ?? null,
                 'tanggal_mulai' => $validated['tanggal_mulai'] ?? null,
                 'tanggal_selesai' => $validated['tanggal_selesai'] ?? null,

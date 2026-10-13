@@ -11,7 +11,6 @@
   </div>
 
   <aside class="peta-panel" aria-label="Panel informasi peta">
-    <a class="back-link" href="{{ url('/') }}" data-route="/">← Kembali ke Beranda</a>
     <h2>Sebaran Data Riau</h2>
     <p class="panel-sub" id="panel-updated">Memuat data…</p>
 
@@ -36,6 +35,13 @@
         <b id="total-umum">—</b>
         <span>Umum</span>
       </div>
+    </div>
+
+    <div class="region-picker" style="margin-bottom: 0.75rem;">
+      <label for="year-select">Periode / Tahun Kegiatan</label>
+      <select id="year-select" aria-label="Filter berdasarkan tahun kegiatan">
+        <option value="">Semua Periode (Kumulatif)</option>
+      </select>
     </div>
 
     <div class="region-picker">

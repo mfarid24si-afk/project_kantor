@@ -173,6 +173,28 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // 3b. Guru Utama (bang Noval - Pekanbaru)
+        $novalUser = User::firstOrCreate(
+            ['email' => 'noval@gmail.com'],
+            [
+                'name' => 'bang Noval',
+                'role' => 'guru_utama',
+                'password' => Hash::make('password123'),
+            ]
+        );
+
+        $guruUtamaNoval = GuruUtama::firstOrCreate(
+            ['user_id' => $novalUser->id],
+            [
+                'nama' => 'bang Noval',
+                'asal_sekolah' => 'SMAN 1 Pekanbaru',
+                'kabupaten' => 'Pekanbaru',
+                'nuptk' => '198801012015011002',
+                'nip' => '198801012015011002',
+                'no_hp' => '081270001122',
+            ]
+        );
+
         // 4. Kegiatan Pengimbasan
         $kegiatan = Kegiatan::firstOrCreate(
             ['nama_kegiatan' => 'Workshop Pengimbasan Tunjuk Ajar & Pantun Melayu 2026'],

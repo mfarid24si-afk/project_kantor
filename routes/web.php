@@ -3,7 +3,6 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\GuruUtamaPortalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KabupatenController;
@@ -19,10 +18,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/peta', [PetaController::class, 'index'])->name('peta');
-Route::get('/form', [FormController::class, 'index'])->name('form');
 Route::get('/kabupaten', [KabupatenController::class, 'index'])->name('kabupaten.index');
 Route::get('/kabupaten/{name}', [KabupatenController::class, 'show'])->name('kabupaten.show');
 Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
+
+// Redirect /form ke portal guru-utama jika login guru-utama, atau ke login jika publik
+Route::get('/form', function () {
+    if (auth()->check() && auth()->user()->isGuruUtama()) {
+        return redirect()->route('guru_utama.guru.index');
+    }
+
+    return redirect()->route('login');
+})->name('form');
 
 /*
 |--------------------------------------------------------------------------
@@ -78,20 +85,30 @@ Route::prefix('guru-utama')->name('guru_utama.')->middleware(['auth', 'role.guru
     // Input Guru yang diajarkan
     Route::get('/guru', [GuruUtamaPortalController::class, 'guruIndex'])->name('guru.index');
     Route::post('/guru', [GuruUtamaPortalController::class, 'guruStore'])->name('guru.store');
+    Route::get('/guru/{guru}/edit', [GuruUtamaPortalController::class, 'guruEdit'])->name('guru.edit');
+    Route::put('/guru/{guru}', [GuruUtamaPortalController::class, 'guruUpdate'])->name('guru.update');
+    Route::post('/guru/import', [GuruUtamaPortalController::class, 'guruImport'])->name('guru.import');
+    Route::get('/guru/template', [GuruUtamaPortalController::class, 'guruTemplate'])->name('guru.template');
+    Route::get('/guru/export', [GuruUtamaPortalController::class, 'guruExport'])->name('guru.export');
     Route::delete('/guru/{guru}', [GuruUtamaPortalController::class, 'guruDestroy'])->name('guru.destroy');
 
     // Input Murid/Siswa yang diajarkan
     Route::get('/siswa', [GuruUtamaPortalController::class, 'siswaIndex'])->name('siswa.index');
     Route::post('/siswa', [GuruUtamaPortalController::class, 'siswaStore'])->name('siswa.store');
+    Route::get('/siswa/{siswa}/edit', [GuruUtamaPortalController::class, 'siswaEdit'])->name('siswa.edit');
+    Route::put('/siswa/{siswa}', [GuruUtamaPortalController::class, 'siswaUpdate'])->name('siswa.update');
+    Route::post('/siswa/import', [GuruUtamaPortalController::class, 'siswaImport'])->name('siswa.import');
+    Route::get('/siswa/template', [GuruUtamaPortalController::class, 'siswaTemplate'])->name('siswa.template');
+    Route::get('/siswa/export', [GuruUtamaPortalController::class, 'siswaExport'])->name('siswa.export');
     Route::delete('/siswa/{siswa}', [GuruUtamaPortalController::class, 'siswaDestroy'])->name('siswa.destroy');
 });
-
 /*
 |--------------------------------------------------------------------------
 | Internal API Routes — Database Lokal MySQL
 |--------------------------------------------------------------------------
 */
 Route::prefix('api')->group(function () {
+    Route::get('/tahun', [ApiController::class, 'getTahunList'])->name('api.tahun');
     Route::get('/guru/counts', [ApiController::class, 'jumlahGuru'])->name('api.guru.counts');
     Route::get('/siswa/counts', [ApiController::class, 'jumlahSiswa'])->name('api.siswa.counts');
     Route::get('/komunitas/counts', [ApiController::class, 'jumlahKomunitas'])->name('api.komunitas.counts');

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\GuruUtama;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,13 +29,23 @@ class RoutesTest extends TestCase
         $response->assertSee('Bengkalis');
     }
 
-    public function test_form_page_is_accessible(): void
+    public function test_form_route_redirects_unauthenticated_user_to_login(): void
     {
         $response = $this->get('/form');
-        $response->assertStatus(200);
-        $response->assertSee('Input Data');
-        $response->assertSee('Upload Data Massal (CSV)');
-        $response->assertSee('id="data-form"', false);
+        $response->assertRedirect('/login');
+    }
+
+    public function test_form_route_redirects_authenticated_guru_utama_to_portal(): void
+    {
+        $user = User::factory()->create(['role' => 'guru_utama']);
+        GuruUtama::create([
+            'user_id' => $user->id,
+            'nama' => 'Guru Pengajar',
+            'kabupaten' => 'Siak',
+        ]);
+
+        $response = $this->actingAs($user)->get('/form');
+        $response->assertRedirect('/guru-utama/guru');
     }
 
     public function test_kabupaten_index_redirects_to_peta(): void

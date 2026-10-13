@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\GuruUtama;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,11 +17,8 @@ class PageNavigationTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Peta Pengimbasan');
-        $response->assertSee('Bahasa Melayu Riau');
-        $response->assertSee('id="stat-kab"', false);
         $response->assertSee('id="stat-guru"', false);
         $response->assertSee('data-route="/peta"', false);
-        $response->assertSee('data-route="/form"', false);
         $response->assertSee('data-route="/tentang"', false);
     }
 
@@ -45,16 +44,22 @@ class PageNavigationTest extends TestCase
         $response->assertSee('Dumai');
     }
 
-    public function test_form_page_displays_single_input_and_csv_upload_forms(): void
+    public function test_form_page_is_protected_and_only_accessible_via_guru_utama_portal(): void
     {
-        $response = $this->get('/form');
+        $guestResponse = $this->get('/form');
+        $guestResponse->assertRedirect('/login');
 
-        $response->assertStatus(200);
-        $response->assertSee('Input Data');
-        $response->assertSee('Upload Data Massal (CSV)');
-        $response->assertSee('id="data-form"', false);
-        $response->assertSee('id="upload-input"', false);
-        $response->assertSee('id="btn-upload"', false);
+        $user = User::factory()->create(['role' => 'guru_utama']);
+        GuruUtama::create([
+            'user_id' => $user->id,
+            'nama' => 'Guru Utama Test',
+            'kabupaten' => 'Bengkalis',
+        ]);
+
+        $authResponse = $this->actingAs($user)->get('/guru-utama/guru');
+        $authResponse->assertStatus(200);
+        $authResponse->assertSee('Pencatatan Guru yang Diajarkan');
+        $authResponse->assertSee('Import Data Guru Massal');
     }
 
     public function test_kabupaten_index_redirects_to_peta(): void

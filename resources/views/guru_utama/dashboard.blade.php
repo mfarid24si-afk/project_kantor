@@ -35,173 +35,133 @@
     </div>
   </div>
 
-  <!-- QUICK ACTIONS -->
-  <div class="admin-quick-actions">
-    <div class="admin-actions-title">Aksi Cepat:</div>
-    <div class="admin-actions-buttons">
-      <a href="{{ route('guru_utama.guru.index') }}" class="btn btn-primary btn--sm">
-        + Input Guru yang Diajarkan
-      </a>
-      <a href="{{ route('guru_utama.siswa.index') }}" class="btn btn-outline btn--sm">
-        + Input Murid / Siswa
-      </a>
-    </div>
-  </div>
+  <!-- GRAFIK & VISUALISASI CAPAIAN PENGIMBASAN -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- GRAFIK 1: KOMPOSISI PENGIMBASAN -->
+    <div class="admin-card" style="margin-bottom: 0;">
+      <div class="admin-card-head" style="margin-bottom: 1rem;">
+        <div>
+          <h3 style="font-size: 1.05rem;">Komposisi Pengimbasan</h3>
+          <p class="admin-page-desc" style="margin: 0;">Perbandingan proporsi guru vs murid</p>
+        </div>
+      </div>
 
-  <!-- KEGIATAN YANG DITUGASKAN OLEH SUPER ADMIN -->
-  <div class="admin-card" style="margin-bottom: 2rem;">
-    <div class="admin-card-head">
-      <div>
-        <h3>Kegiatan Pengimbasan yang Ditugaskan</h3>
-        <p class="admin-page-desc" style="margin: 0;">Kegiatan yang diberikan Super Admin kepada Anda bersama Maestro pembina.</p>
+      <div style="padding: 0.25rem 0;">
+        <div style="height: 18px; width: 100%; background: #e5e7eb; border-radius: 999px; overflow: hidden; display: flex; margin-bottom: 1.25rem;">
+          @if($totalPeserta > 0)
+            <div style="width: {{ $guruPct }}%; background: #2563eb; transition: width 0.3s ease;" title="Guru: {{ $guruPct }}%"></div>
+            <div style="width: {{ $siswaPct }}%; background: #0d9488; transition: width 0.3s ease;" title="Siswa: {{ $siswaPct }}%"></div>
+          @else
+            <div style="width: 100%; background: #d1d5db;" title="Belum ada data"></div>
+          @endif
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div style="padding: 12px; background: #eff6ff; border-radius: 8px; border-left: 4px solid #2563eb;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.8rem; font-weight: 600; color: #1e40af;">Guru Terimbas</span>
+              <span style="font-size: 0.75rem; font-weight: 700; color: #2563eb;">{{ $guruPct }}%</span>
+            </div>
+            <div style="font-size: 1.35rem; font-weight: 700; color: #1e3a8a; margin-top: 4px;">{{ number_format($totalGuruDiajar, 0, ',', '.') }}</div>
+            <span style="font-size: 0.72rem; color: #6b7280;">rekan guru sejawat</span>
+          </div>
+
+          <div style="padding: 12px; background: #f0fdfa; border-radius: 8px; border-left: 4px solid #0d9488;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.8rem; font-weight: 600; color: #115e59;">Murid Terimbas</span>
+              <span style="font-size: 0.75rem; font-weight: 700; color: #0d9488;">{{ $siswaPct }}%</span>
+            </div>
+            <div style="font-size: 1.35rem; font-weight: 700; color: #134e4a; margin-top: 4px;">{{ number_format($totalSiswaDiajar, 0, ',', '.') }}</div>
+            <span style="font-size: 0.72rem; color: #6b7280;">siswa di sekolah</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.82rem;">
+          <span class="text-muted">Total Keseluruhan Binaan:</span>
+          <b style="color: var(--ink);">{{ number_format($totalPeserta, 0, ',', '.') }} orang</b>
+        </div>
       </div>
     </div>
 
-    @if($kegiatans->isEmpty())
-      <div class="empty-state">
-        Saat ini belum ada kegiatan pengimbasan yang ditugaskan kepada Anda oleh Super Admin.
+    <!-- GRAFIK 2: SEBARAN PER KEGIATAN -->
+    <div class="admin-card" style="margin-bottom: 0;">
+      <div class="admin-card-head" style="margin-bottom: 1rem;">
+        <div>
+          <h3 style="font-size: 1.05rem;">Sebaran per Kegiatan</h3>
+          <p class="admin-page-desc" style="margin: 0;">Peserta pada tiap penugasan</p>
+        </div>
       </div>
-    @else
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nama Kegiatan &amp; Lokasi</th>
-              <th>Maestro Pembina</th>
-              <th>Jadwal Pelaksanaan</th>
-              <th>Status</th>
-              <th style="text-align: center;">Tindakan</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($kegiatans as $k)
-              <tr>
-                <td>
-                  <b>{{ $k->nama_kegiatan }}</b>
-                  <div class="table-sub">
-                    <span class="badge badge--pill badge--blue">{{ $k->kabupaten }}</span>
-                    @if($k->tempat)
-                      <span>• {{ $k->tempat }}</span>
-                    @endif
-                  </div>
-                </td>
-                <td>
-                  @if($k->maestros->isEmpty())
-                    <span class="text-muted">—</span>
-                  @else
-                    <div class="tag-list">
-                      @foreach($k->maestros as $m)
-                        <span class="badge badge--pill badge--amber" title="{{ $m->bidang_seni }}">
-                          ⭐ {{ $m->nama }} ({{ $m->bidang_seni }})
-                        </span>
-                      @endforeach
-                    </div>
+
+      <div style="padding: 0.25rem 0;">
+        @if($kegiatanStats->isEmpty())
+          <div class="empty-state" style="padding: 1.5rem 1rem;">Belum ada kegiatan pengimbasan yang ditugaskan kepada Anda.</div>
+        @else
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            @foreach($kegiatanStats as $ks)
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 2px;">
+                  <b style="color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;" title="{{ $ks['nama'] }}">{{ $ks['nama'] }}</b>
+                  <span style="font-weight: 600; color: #143026;">{{ $ks['total'] }} peserta</span>
+                </div>
+                @if(!empty($ks['maestro_names']))
+                  <small style="display: block; font-size: 0.72rem; color: #b45309; margin-bottom: 4px;">
+                    ⭐ Maestro: {{ $ks['maestro_names'] }}
+                  </small>
+                @endif
+                <div style="height: 10px; width: 100%; background: #e5e7eb; border-radius: 6px; overflow: hidden; display: flex;">
+                  @if($ks['total'] > 0)
+                    @php
+                      $gPart = round(($ks['guru_count'] / $maxKegiatanTotal) * 100);
+                      $sPart = round(($ks['siswa_count'] / $maxKegiatanTotal) * 100);
+                    @endphp
+                    <div style="width: {{ $gPart }}%; background: #2563eb;" title="Guru: {{ $ks['guru_count'] }}"></div>
+                    <div style="width: {{ $sPart }}%; background: #0d9488;" title="Siswa: {{ $ks['siswa_count'] }}"></div>
                   @endif
-                </td>
-                <td>
-                  @if($k->tanggal_mulai)
-                    {{ \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('d M Y') }}
-                    @if($k->tanggal_selesai && $k->tanggal_selesai !== $k->tanggal_mulai)
-                      <br><small class="text-muted">s.d. {{ \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('d M Y') }}</small>
-                    @endif
-                  @else
-                    <span class="text-muted">—</span>
-                  @endif
-                </td>
-                <td>
-                  @php
-                    $statusBadge = match($k->status) {
-                      'berlangsung' => 'badge--success',
-                      'selesai' => 'badge--neutral',
-                      default => 'badge--warning',
-                    };
-                  @endphp
-                  <span class="badge {{ $statusBadge }}">{{ ucfirst($k->status) }}</span>
-                </td>
-                <td style="text-align: center;">
-                  <div class="table-actions">
-                    <a href="{{ route('guru_utama.guru.index', ['kegiatan_id' => $k->id]) }}" class="btn btn-outline btn--xs">
-                      + Input Guru
-                    </a>
-                    <a href="{{ route('guru_utama.siswa.index', ['kegiatan_id' => $k->id]) }}" class="btn btn-outline btn--xs">
-                      + Input Murid
-                    </a>
-                  </div>
-                </td>
-              </tr>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: #6b7280; margin-top: 2px;">
+                  <span>Guru: {{ $ks['guru_count'] }}</span>
+                  <span>Siswa: {{ $ks['siswa_count'] }}</span>
+                </div>
+              </div>
             @endforeach
-          </tbody>
-        </table>
+          </div>
+        @endif
       </div>
-    @endif
-  </div>
-
-  <!-- RECENT INPUTS GRID -->
-  <div class="admin-columns-grid">
-    <!-- GURU TERAKHIR DIINPUT -->
-    <div class="admin-card">
-      <div class="admin-card-head">
-        <h3>Guru Baru Diajarkan</h3>
-        <a href="{{ route('guru_utama.guru.index') }}" class="btn-link">Lihat Semua →</a>
-      </div>
-
-      @if($recentGurus->isEmpty())
-        <div class="empty-state">Belum ada data guru yang Anda input.</div>
-      @else
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nama Guru</th>
-                <th>Sekolah</th>
-                <th>Kabupaten</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($recentGurus as $rg)
-                <tr>
-                  <td><b>{{ $rg->nama_guru }}</b></td>
-                  <td>{{ $rg->asal_sekolah }}</td>
-                  <td><span class="badge badge--pill badge--blue">{{ $rg->kabupaten }}</span></td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      @endif
     </div>
 
-    <!-- SISWA TERAKHIR DIINPUT -->
-    <div class="admin-card">
-      <div class="admin-card-head">
-        <h3>Murid Baru Diajarkan</h3>
-        <a href="{{ route('guru_utama.siswa.index') }}" class="btn-link">Lihat Semua →</a>
+    <!-- GRAFIK 3: TOP SEKOLAH SASARAN -->
+    <div class="admin-card" style="margin-bottom: 0;">
+      <div class="admin-card-head" style="margin-bottom: 1rem;">
+        <div>
+          <h3 style="font-size: 1.05rem;">Sekolah Sasaran Utama</h3>
+          <p class="admin-page-desc" style="margin: 0;">Lembaga binaan (Total: {{ $totalSekolahUnik }} sekolah)</p>
+        </div>
       </div>
 
-      @if($recentSiswas->isEmpty())
-        <div class="empty-state">Belum ada data murid yang Anda input.</div>
-      @else
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nama Murid</th>
-                <th>Sekolah</th>
-                <th>Kabupaten</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($recentSiswas as $rs)
-                <tr>
-                  <td><b>{{ $rs->nama_siswa }}</b></td>
-                  <td>{{ $rs->sekolah }}</td>
-                  <td><span class="badge badge--pill badge--blue">{{ $rs->kabupaten }}</span></td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      @endif
+      <div style="padding: 0.25rem 0;">
+        @if(empty($topSekolah))
+          <div class="empty-state" style="padding: 1.5rem 1rem;">Belum ada data sekolah yang tercatat.</div>
+        @else
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            @foreach($topSekolah as $sekolahName => $count)
+              @php
+                $sekPct = round(($count / $maxSekolahTotal) * 100);
+              @endphp
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+                  <span style="font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="{{ $sekolahName }}">
+                    🏫 {{ $sekolahName }}
+                  </span>
+                  <b style="color: #0d9488;">{{ $count }} orang</b>
+                </div>
+                <div style="height: 8px; width: 100%; background: #e5e7eb; border-radius: 6px; overflow: hidden;">
+                  <div style="height: 100%; width: {{ $sekPct }}%; background: linear-gradient(90deg, #10b981, #0d9488); border-radius: 6px;"></div>
+                </div>
+              </div>
+            @endforeach
+          </div>
+        @endif
+      </div>
     </div>
   </div>
 </div>

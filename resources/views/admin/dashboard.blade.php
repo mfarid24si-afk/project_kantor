@@ -55,117 +55,39 @@
     </div>
   </div>
 
-  <!-- QUICK ACTIONS -->
-  <div class="admin-quick-actions">
-    <div class="admin-actions-title">Tindakan Cepat:</div>
-    <div class="admin-actions-buttons">
-      <a href="{{ route('admin.kegiatan.create') }}" class="btn btn-primary btn--sm">
-        + Buat Kegiatan Baru
-      </a>
-      <a href="{{ route('admin.maestro.create') }}" class="btn btn-outline btn--sm">
-        + Tambah Maestro
-      </a>
-      <a href="{{ route('admin.guru_utama.create') }}" class="btn btn-outline btn--sm">
-        + Daftarkan Guru Utama
-      </a>
-    </div>
-  </div>
-
-  <!-- TWO COLUMN RECENT TABLES -->
-  <div class="admin-columns-grid">
-    <!-- RECENT KEGIATAN -->
-    <div class="admin-card">
-      <div class="admin-card-head">
-        <h3>Kegiatan Pengimbasan Terbaru</h3>
-        <a href="{{ route('admin.kegiatan.index') }}" class="btn-link">Lihat Semua →</a>
+  <!-- PETA MONITORING WILAYAH RIAU (STANDALONE FRAMED MAP) -->
+  <div class="admin-card" style="padding: 0; overflow: hidden; margin-top: 1.5rem; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); background: #ffffff;">
+    <div style="padding: 16px 22px; border-bottom: 1px solid var(--line); background: #fafdfb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h3 style="margin: 0; font-size: 1.15rem; color: #143026; display: flex; align-items: center; gap: 8px;">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0d9488;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" x2="8" y1="2" y2="18"/><line x1="16" x2="16" y1="6" y2="22"/></svg>
+          Peta Monitoring Sebaran Wilayah Riau
+        </h3>
+        <p class="admin-page-desc" style="margin: 3px 0 0; font-size: 0.85rem;">
+          Klik poligon kabupaten/kota untuk melihat rincian jumlah guru, siswa, komunitas, dan umum.
+        </p>
       </div>
 
-      @if($recentKegiatan->isEmpty())
-        <div class="empty-state">Belum ada kegiatan pengimbasan yang dibuat.</div>
-      @else
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nama Kegiatan</th>
-                <th>Wilayah</th>
-                <th>Maestro</th>
-                <th>Guru Utama</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($recentKegiatan as $keg)
-                <tr>
-                  <td>
-                    <b>{{ $keg->nama_kegiatan }}</b>
-                    <small class="text-muted d-block">{{ $keg->tanggal_mulai ? $keg->tanggal_mulai->format('d M Y') : 'Jadwal fleksibel' }}</small>
-                  </td>
-                  <td>{{ $keg->kabupaten }}</td>
-                  <td>
-                    @if($keg->maestros->isEmpty())
-                      <span class="text-muted">—</span>
-                    @else
-                      {{ $keg->maestros->pluck('nama')->implode(', ') }}
-                    @endif
-                  </td>
-                  <td>
-                    <span class="badge badge--pill">{{ $keg->guruUtamas->count() }} Guru Utama</span>
-                  </td>
-                  <td>
-                    <a href="{{ route('admin.kegiatan.show', $keg) }}" class="btn btn-outline btn--xs">Detail</a>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      @endif
+      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <select id="year-select" class="form-control" style="width: auto; padding: 5px 10px; font-size: 0.82rem; border-radius: 6px;" aria-label="Filter Periode Tahun">
+          <option value="">Semua Periode (Kumulatif)</option>
+        </select>
+        <button id="toggle-base" class="control-btn" type="button" style="padding: 5px 10px; font-size: 0.8rem; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; cursor: pointer;">
+          Peta Dasar
+        </button>
+        <button id="toggle-polygons" class="control-btn" type="button" style="padding: 5px 10px; font-size: 0.8rem; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; cursor: pointer;">
+          Poligon
+        </button>
+      </div>
     </div>
 
-    <!-- RECENT GURU UTAMA -->
-    <div class="admin-card">
-      <div class="admin-card-head">
-        <h3>Guru Utama Terdaftar</h3>
-        <a href="{{ route('admin.guru_utama.index') }}" class="btn-link">Lihat Semua →</a>
+    <div class="page-peta" id="page-peta" style="height: 560px; margin: 0; position: relative; background: #e5e7eb; display: block;">
+      <div id="map" style="width: 100%; height: 100%; position: absolute; inset: 0;"></div>
+      <div id="popup" class="ol-popup" style="display:none;">
+        <button id="popup-closer" class="ol-popup-closer" aria-label="Tutup popup">✕</button>
+        <div id="popup-content"></div>
       </div>
 
-      @if($recentGuruUtama->isEmpty())
-        <div class="empty-state">Belum ada guru utama yang didaftarkan.</div>
-      @else
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nama &amp; Akun</th>
-                <th>Asal Sekolah &amp; Kab</th>
-                <th>Guru Diajar</th>
-                <th>Siswa Diajar</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($recentGuruUtama as $gu)
-                <tr>
-                  <td>
-                    <b>{{ $gu->nama }}</b>
-                    <small class="text-muted d-block">{{ $gu->user?->email }}</small>
-                  </td>
-                  <td>
-                    {{ $gu->asal_sekolah }}
-                    <small class="text-muted d-block">{{ $gu->kabupaten }}</small>
-                  </td>
-                  <td>
-                    <b>{{ $gu->gurus->count() }}</b> guru
-                  </td>
-                  <td>
-                    <b>{{ $gu->siswas->count() }}</b> siswa
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      @endif
     </div>
   </div>
 </div>

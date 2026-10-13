@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
+use App\Models\Kegiatan;
 use App\Models\Komunitas;
 use App\Models\Siswa;
 use App\Models\Umum;
@@ -27,13 +28,45 @@ class ApiController extends Controller
     }
 
     /**
+     * Dapatkan daftar tahun kegiatan yang tersedia.
+     */
+    public function getTahunList(): JsonResponse
+    {
+        $yearsFromKegiatan = Kegiatan::whereNotNull('tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
+            ->map(fn ($y) => (int) $y)
+            ->toArray();
+
+        if (empty($yearsFromKegiatan)) {
+            $yearsFromKegiatan = [(int) date('Y')];
+        }
+
+        return response()->json($yearsFromKegiatan);
+    }
+
+    /**
      * Hitung jumlah guru per kabupaten untuk peta & perbandingan.
      */
-    public function jumlahGuru(): JsonResponse
+    public function jumlahGuru(Request $request): JsonResponse
     {
-        $counts = Guru::select('kabupaten', DB::raw('count(*) as total'))
-            ->whereNotNull('kabupaten')
-            ->groupBy('kabupaten')
+        $query = Guru::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten');
+
+        if ($request->filled('tahun')) {
+            $tahun = (int) $request->query('tahun');
+            $query->where(function ($w) use ($tahun) {
+                $w->whereHas('kegiatan', function ($k) use ($tahun) {
+                    $k->where('tahun', $tahun);
+                })->orWhere(function ($fallback) use ($tahun) {
+                    $fallback->whereNull('kegiatan_id')
+                        ->whereYear('created_at', $tahun);
+                });
+            });
+        }
+
+        $counts = $query->groupBy('kabupaten')
             ->pluck('total', 'kabupaten')
             ->toArray();
 
@@ -43,11 +76,24 @@ class ApiController extends Controller
     /**
      * Hitung jumlah siswa per kabupaten.
      */
-    public function jumlahSiswa(): JsonResponse
+    public function jumlahSiswa(Request $request): JsonResponse
     {
-        $counts = Siswa::select('kabupaten', DB::raw('count(*) as total'))
-            ->whereNotNull('kabupaten')
-            ->groupBy('kabupaten')
+        $query = Siswa::select('kabupaten', DB::raw('count(*) as total'))
+            ->whereNotNull('kabupaten');
+
+        if ($request->filled('tahun')) {
+            $tahun = (int) $request->query('tahun');
+            $query->where(function ($w) use ($tahun) {
+                $w->whereHas('kegiatan', function ($k) use ($tahun) {
+                    $k->where('tahun', $tahun);
+                })->orWhere(function ($fallback) use ($tahun) {
+                    $fallback->whereNull('kegiatan_id')
+                        ->whereYear('created_at', $tahun);
+                });
+            });
+        }
+
+        $counts = $query->groupBy('kabupaten')
             ->pluck('total', 'kabupaten')
             ->toArray();
 
@@ -111,7 +157,9 @@ class ApiController extends Controller
             return response()->json(['error' => 'Tabel tidak ditemukan'], 404);
         }
 
-        $data = $request->all();
+        $fillable = (new $modelClass)->getFillable();
+        $allowedKeys = array_flip($fillable);
+        $data = array_intersect_key($request->all(), $allowedKeys);
         $record = $modelClass::create($data);
 
         return response()->json($record, 201);

@@ -21,18 +21,13 @@
 
       <div class="form-grid">
         <div class="form-group form-group--span-2">
-          <label for="kegiatan_id" class="form-label">Kegiatan Terkait (Opsional)</label>
-          <select id="kegiatan_id" name="kegiatan_id" class="form-control @error('kegiatan_id') is-invalid @enderror">
-            <option value="">-- Tanpa / Di Luar Kegiatan Khusus --</option>
-            @foreach($kegiatans as $k)
-              <option value="{{ $k->id }}" {{ (old('kegiatan_id', request('kegiatan_id')) == $k->id) ? 'selected' : '' }}>
-                {{ $k->nama_kegiatan }} ({{ $k->kabupaten }})
-              </option>
-            @endforeach
-          </select>
-          @error('kegiatan_id')
-            <span class="invalid-feedback">{{ $message }}</span>
-          @enderror
+          <label class="form-label">Kegiatan Pengimbasan Ditugaskan (Terkunci)</label>
+          @if($assignedKegiatan)
+            <input type="text" class="form-control" value="{{ $assignedKegiatan->nama_kegiatan }} ({{ $assignedKegiatan->kabupaten }})" readonly style="background: #f8faf9; cursor: not-allowed; font-weight: 600; color: #143026;" />
+            <small class="text-muted" style="display: block; margin-top: 4px;">🔒 Anda secara otomatis terikat pada 1 kegiatan pengimbasan resmi yang ditugaskan oleh Admin.</small>
+          @else
+            <input type="text" class="form-control" value="Belum ada penugasan kegiatan resmi dari Admin" readonly style="background: #fef2f2; color: #b91c1c; font-weight: 600;" />
+          @endif
         </div>
 
         <div class="form-group">
@@ -52,42 +47,26 @@
         </div>
 
         <div class="form-group">
-          <label for="asal_sekolah" class="form-label required">Asal Sekolah Guru</label>
+          <label class="form-label">Sekolah Tempat Pengimbasan (Terkunci)</label>
           <input
             type="text"
-            id="asal_sekolah"
-            name="asal_sekolah"
-            class="form-control @error('asal_sekolah') is-invalid @enderror"
-            value="{{ old('asal_sekolah') }}"
-            placeholder="Contoh: SMPN 2 Siak"
-            required
+            class="form-control"
+            value="{{ $guruUtama->asal_sekolah }}"
+            readonly
+            style="background: #f8faf9; cursor: not-allowed; font-weight: 600; color: #143026;"
           />
-          @error('asal_sekolah')
-            <span class="invalid-feedback">{{ $message }}</span>
-          @enderror
+          <small class="text-muted" style="display: block; margin-top: 4px;">🔒 Terkunci: Pengimbasan khusus di sekolah induk tempat tugas Anda ({{ $guruUtama->asal_sekolah }}).</small>
         </div>
 
-        @php
-          $daftarKabupaten = [
-            'Bengkalis', 'Dumai', 'Indragiri Hilir', 'Indragiri Hulu',
-            'Kampar', 'Kuantansingingi', 'Meranti', 'Pekanbaru',
-            'Pelalawan', 'Rohil', 'Rohul', 'Siak',
-          ];
-        @endphp
-
         <div class="form-group">
-          <label for="kabupaten" class="form-label required">Kabupaten / Kota</label>
-          <select id="kabupaten" name="kabupaten" class="form-control @error('kabupaten') is-invalid @enderror" required>
-            <option value="">-- Pilih Kabupaten --</option>
-            @foreach($daftarKabupaten as $kab)
-              <option value="{{ $kab }}" {{ old('kabupaten', $guruUtama->kabupaten) == $kab ? 'selected' : '' }}>
-                {{ $kab }}
-              </option>
-            @endforeach
-          </select>
-          @error('kabupaten')
-            <span class="invalid-feedback">{{ $message }}</span>
-          @enderror
+          <label class="form-label">Kabupaten / Wilayah (Terkunci)</label>
+          <input
+            type="text"
+            class="form-control"
+            value="{{ $guruUtama->kabupaten }}"
+            readonly
+            style="background: #f8faf9; cursor: not-allowed; font-weight: 600; color: #143026;"
+          />
         </div>
 
         <div class="form-group">
@@ -129,6 +108,52 @@
     </form>
   </div>
 
+  <!-- FORM UPLOAD MASSAL GURU -->
+  <div class="admin-card form-card" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h3 class="form-section-title">Import Data Guru Massal (Excel / CSV)</h3>
+        <p class="form-section-desc">Unggah data guru sekaligus menggunakan file <b>.xlsx</b> atau <b>.csv</b>. Data otomatis terhubung ke profil Anda.</p>
+      </div>
+      <a href="{{ route('guru_utama.guru.template') }}" class="btn btn-outline" style="white-space: nowrap;">
+        Unduh Contoh Template CSV
+      </a>
+    </div>
+
+    <form method="POST" action="{{ route('guru_utama.guru.import') }}" enctype="multipart/form-data">
+      @csrf
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Kegiatan &amp; Sekolah Tujuan (Terkunci)</label>
+          <div style="padding: 9px 12px; background: #f8faf9; border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #143026;">
+            🔒 {{ $assignedKegiatan?->nama_kegiatan ?? 'Kegiatan Mandiri' }} · {{ $guruUtama->asal_sekolah }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="import_file_guru" class="form-label required">Pilih File (.xlsx atau .csv)</label>
+          <input
+            type="file"
+            id="import_file_guru"
+            name="file"
+            accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            class="form-control @error('file') is-invalid @enderror"
+            required
+          />
+          @error('file')
+            <span class="invalid-feedback">{{ $message }}</span>
+          @enderror
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-secondary">
+          Mulai Import Guru
+        </button>
+      </div>
+    </form>
+  </div>
+
   <!-- DAFTAR GURU YANG SUDAH DIINPUT -->
   <div class="admin-page-header">
     <div>
@@ -137,28 +162,25 @@
     </div>
   </div>
 
-  <div class="admin-filter-bar">
-    <form method="GET" action="{{ route('guru_utama.guru.index') }}" class="admin-search-form">
+  <div class="admin-filter-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <form method="GET" action="{{ route('guru_utama.guru.index') }}" class="admin-search-form" style="flex: 1; min-width: 260px;">
       <input
         type="search"
         name="q"
         value="{{ request('q') }}"
-        placeholder="Cari nama guru, asal sekolah, NUPTK…"
+        placeholder="Cari nama guru atau NUPTK…"
         class="form-control"
       />
-      <select name="kegiatan_id" class="form-control" onchange="this.form.submit()">
-        <option value="">-- Semua Kegiatan --</option>
-        @foreach($kegiatans as $k)
-          <option value="{{ $k->id }}" {{ request('kegiatan_id') == $k->id ? 'selected' : '' }}>
-            {{ $k->nama_kegiatan }}
-          </option>
-        @endforeach
-      </select>
       <button type="submit" class="btn btn-outline">Cari</button>
-      @if(request('q') || request('kegiatan_id'))
+      @if(request('q'))
         <a href="{{ route('guru_utama.guru.index') }}" class="btn btn-link">Reset</a>
       @endif
     </form>
+    @if(!$gurus->isEmpty())
+      <a href="{{ route('guru_utama.guru.export') }}" class="btn btn-outline" style="white-space: nowrap;">
+        Unduh Rekap CSV
+      </a>
+    @endif
   </div>
 
   <div class="admin-card">
@@ -198,8 +220,9 @@
                 <td>
                   <small class="text-muted">{{ $g->created_at?->translatedFormat('d M Y') ?? '—' }}</small>
                 </td>
-                <td style="text-align: center;">
-                  <form method="POST" action="{{ route('guru_utama.guru.destroy', $g) }}" onsubmit="return confirm('Hapus data guru {{ $g->nama_guru }}?');">
+                <td style="text-align: center; white-space: nowrap;">
+                  <a href="{{ route('guru_utama.guru.edit', $g) }}" class="btn btn-outline btn--xs" style="margin-right: 0.25rem;">Edit</a>
+                  <form method="POST" action="{{ route('guru_utama.guru.destroy', $g) }}" onsubmit="return confirm('Hapus data guru {{ $g->nama_guru }}?');" style="display: inline;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn--xs">Hapus</button>

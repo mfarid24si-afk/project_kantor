@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Guru;
+use App\Models\Kegiatan;
 use App\Models\Komunitas;
 use App\Models\Siswa;
 use App\Models\Umum;
@@ -234,5 +235,56 @@ class ApiDataWorkflowTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJson(['error' => 'Tabel tidak ditemukan']);
+    }
+
+    public function test_api_tahun_returns_available_years_and_filters_counts(): void
+    {
+        $kegiatan2025 = Kegiatan::create([
+            'nama_kegiatan' => 'Kegiatan 2025',
+            'kabupaten' => 'Siak',
+            'tahun' => 2025,
+        ]);
+
+        $kegiatan2026 = Kegiatan::create([
+            'nama_kegiatan' => 'Kegiatan 2026',
+            'kabupaten' => 'Siak',
+            'tahun' => 2026,
+        ]);
+
+        Guru::create([
+            'nama_guru' => 'Guru 2025',
+            'asal_sekolah' => 'SMAN 1 Siak',
+            'kabupaten' => 'Siak',
+            'kegiatan_id' => $kegiatan2025->id,
+        ]);
+
+        Guru::create([
+            'nama_guru' => 'Guru 2026 A',
+            'asal_sekolah' => 'SMAN 1 Siak',
+            'kabupaten' => 'Siak',
+            'kegiatan_id' => $kegiatan2026->id,
+        ]);
+
+        Guru::create([
+            'nama_guru' => 'Guru 2026 B',
+            'asal_sekolah' => 'SMAN 2 Siak',
+            'kabupaten' => 'Siak',
+            'kegiatan_id' => $kegiatan2026->id,
+        ]);
+
+        $resTahun = $this->getJson('/api/tahun');
+        $resTahun->assertStatus(200);
+        $this->assertTrue(in_array(2025, $resTahun->json()));
+        $this->assertTrue(in_array(2026, $resTahun->json()));
+
+        // Filter 2025
+        $res2025 = $this->getJson('/api/guru/counts?tahun=2025');
+        $res2025->assertStatus(200);
+        $this->assertEquals(1, $res2025->json()['Siak'] ?? 0);
+
+        // Filter 2026
+        $res2026 = $this->getJson('/api/guru/counts?tahun=2026');
+        $res2026->assertStatus(200);
+        $this->assertEquals(2, $res2026->json()['Siak'] ?? 0);
     }
 }

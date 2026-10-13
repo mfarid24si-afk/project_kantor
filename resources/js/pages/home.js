@@ -652,7 +652,6 @@ export function renderHome(container) {
 
 
           <div class="hero-actions">
-
             <a
               class="btn btn-primary"
               href="/peta"
@@ -660,7 +659,6 @@ export function renderHome(container) {
             >
               Buka Peta
             </a>
-
             <a
               class="btn btn-light"
               href="/form"
@@ -668,7 +666,6 @@ export function renderHome(container) {
             >
               Input Data
             </a>
-
           </div>
 
         </div>

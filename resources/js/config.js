@@ -1,19 +1,8 @@
 /* =====================================================================
- * KONFIGURASI TERPUSAT APLIKASI (FR-5.3)
- * Semua konstanta dipusatkan di satu tempat agar halaman Form dan Peta
- * membaca sumber yang sama — menghindari duplikasi nama tabel/kolom.
- *
- * PENTING: nilai SUPABASE_URL dan SUPABASE_ANON_KEY TIDAK BOLEH DIUBAH
- * dari implementasi awal. Struktur API key (header apikey / Authorization)
- * dipertahankan apa adanya — hanya diperluas untuk tabel `siswa`.
+ * KONFIGURASI TERPUSAT APLIKASI
+ * Konstanta tabel dan kolom untuk integrasi API internal Laravel.
+ * Data tersimpan di database lokal MySQL via endpoint /api.
  * ===================================================================== */
-
-// --- Supabase (API key dari implementasi awal, jangan diubah) ---
-export const SUPABASE_URL =
-  import.meta.env?.VITE_SUPABASE_URL || 'https://lvorvfhdrlagcpsimteo.supabase.co';
-export const SUPABASE_ANON_KEY =
-  import.meta.env?.VITE_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2b3J2ZmhkcmxhZ2Nwc2ltdGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzIwNTAsImV4cCI6MjEwMTkwODA1MH0.gM7BvTL1wNKVx6Oxozry_s8bazxTNtRbU7u0p7Lx3pA';
 
 // --- Tabel & kolom Supabase (SKEMA ASLI, hasil verifikasi langsung) ---
 export const TABEL_GURU = 'guru';
